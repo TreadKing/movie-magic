@@ -20,13 +20,25 @@ def search_actor(actor_id):
     r = requests.get(BASE_URL + "/Name/" + API_KEY + "/" +actor_id)
     r = r.json()
     i = 0
+
+    actor_img = r["image"]
+
     while i < 10:
-        film = r["castMovies"][i]["description"]
-        if "TV Series" not in film:
-            saved_films.append(r["castMovies"][i]["title"])
+        film_desc = r["castMovies"][i]["description"]
+        if "TV Series" not in film_desc:
+            film = [r["castMovies"][i]["title"], r["castMovies"][i]["id"]]
+            saved_films.append(film)
         i += 1
     print(saved_films)
+    display_movie(saved_films)
 
 def display_movie(film_list):
-    ...
+    film_posters = []
+    for i in range(len(film_list)):
+        film_id = film_list[i][1]
+        r = requests.get(BASE_URL + "/Title/" + API_KEY + "/" +film_id)
+        r = r.json()
+        film_posters.append(r["image"])
+    #Some movies do not have a image url so the link will be None
+    print(film_posters)
 get_actorid()
