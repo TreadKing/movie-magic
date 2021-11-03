@@ -15,8 +15,11 @@ def get_name():
     #print(r["results"][0]["id"])
     actor_id = r["results"][0]["id"]
     search_name(actor_id)
+
 def search_name(actor_id):
-    r = requests.get(BASE_URL + "/Name/" + API_KEY + actor_id)
+    r = requests.get(BASE_URL + "/Name/" + API_KEY + "/" +actor_id)
     r = r.json()
-    print(r)
+    for i in range(10):
+        print(r["castMovies"][i]["title"])
+
 get_name()
