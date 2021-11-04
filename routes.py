@@ -3,7 +3,6 @@ main backend for flask server.
 includes routes
 """
 
-from logging import debug
 import os
 import json
 import random
@@ -11,14 +10,13 @@ from flask.templating import render_template
 
 import requests
 import flask
-from flask import request, url_for, redirect
+from flask import request, url_for, redirect, make_response
 from flask.json import jsonify
-from flask_login import login_user, current_user, LoginManager, logout_user
-from flask_login.utils import login_required
 from oauthlib.oauth2 import WebApplicationClient
 
 from app import app, db
 from models import User
+from auth_token import encode_auth_token, decode_auth_token
 
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
@@ -33,13 +31,6 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
-# Flask-Login helper to retrieve a user from our db
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -82,29 +73,36 @@ def login_callback():
     # Parse the tokens!
     client.parse_request_body_response(json.dumps(token_response.json()))
 
-    # Now that you have tokens (yay) let's find and hit the URL
-    # from Google that gives you the user's profile information,
-    # including their Google profile image and email
+    #  get user info from google login
     userinfo_endpoint = google_provider_cfg['userinfo_endpoint']
     uri, headers, body = client.add_token(userinfo_endpoint)
     userinfo_response = requests.get(uri, headers=headers, data=body)
 
-    # You want to make sure their email is verified.
-    # The user authenticated with Google, authorized your
-    # app, and now you've verified their email through Google!
+    # check if email is verified with google
     if userinfo_response.json().get("email_verified"):
         user_id = userinfo_response.json()["sub"]
-        email = userinfo_response.json()["email"]
-        username = userinfo_response.json()["given_name"]
+        username = userinfo_response.json()["given_name"].strip()
 
-        print(user_id)
-        print(email)
-        print(username)
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            user = User(user_id=user_id, username=username)
+            db.session.add(user)
+            db.session.commit()
+        
+        auth_token = encode_auth_token(user.user_id)
+        print(auth_token)
+
+        if auth_token:
+            output = {
+                'auth_token': auth_token, 
+                'username': user.username
+            }
+            print(output)
+            return make_response(jsonify(output)), 200
+
         
     else:
         return "User email not available or not verified by Google.", 400
-
-    return 'hi'
 
     
 

@@ -1,16 +1,14 @@
 """
 database mododels for app
 """
-from flask_login import UserMixin
 from app import db
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     """
     users class for the db
     """
 
-    user_id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String)
+    user_id = db.Column(db.Float, primary_key=True)
     username = db.Column(db.String)
 
     def __repr__(self):
