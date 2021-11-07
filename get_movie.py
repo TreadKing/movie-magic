@@ -45,21 +45,29 @@ def get_movie_details(movie_id):
 
 
 # Gets 20 options, can get multiple pages, some of the results are old and have already released
+# Example output
+# ['Encanto', '2021-11-24', 'image'], ['Ghostbusters: Afterlife', '2021-11-19', 'image'], ['Resident Evil: Welcome to Raccoon City', '2021-11-24', 'image'],
+# ['King Richard', '2021-11-19', 'image'], ['House of Gucci', '2021-11-24', 'image'], ['The Unforgivable', '2021-11-24', 'image']
 def get_upcoming():
-    """Uses TheMovieDB API to get a"""
+    """Uses TheMovieDB API"""
     movie_list = []
-    params = {"api_key": MOVIEDB_KEY, "language": "en-US"}
+    params = {"api_key": MOVIEDB_KEY, "language": "en-US", "region": "US"}
     r = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
     r = r.json()
     for i in range(len(r["results"])):
         film = ["title", "release_date"]
         film[0] = r["results"][i]["original_title"]
         film[1] = r["results"][i]["release_date"]
+        # film[2] = POSTER_URL + r["results"][i]["poster_path"]
         movie_list.append(film)
     print(movie_list)
 
 
 # Gets 19 results, up to Nov 26th
+# ['Belfast', 'November 12'], ['Clifford the Big Red Dog', 'November 12'],
+# ['Apex', 'November 12'], ['Night Raiders', 'November 12'], ['Ghostbusters: Afterlife', 'November 19'],
+# ['Licorice Pizza', 'November 26'], ['Encanto', 'November 26'], ['Resident Evil: Welcome to Raccoon City', 'November 26'],
+# ['The Humans', 'November 26'], ['National Champions', 'November 26'], ['Drive My Car', 'November 26']
 def get_comingSoon():
     movie_list = []
     r = requests.get("https://imdb-api.com/en/API/ComingSoon/" + IMDB_KEY)
@@ -89,5 +97,5 @@ def get_similar(movie_id):
 
 # search_movie_by_text("Dune")
 # get_movie_details("562")
-# get_upcoming()
+get_upcoming()
 # get_comingSoon()
