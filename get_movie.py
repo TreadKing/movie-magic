@@ -1,11 +1,11 @@
 import requests
 import os
+import json
 from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
 
 MOVIEDB_KEY = os.getenv("MOVIEDB_KEY")
-IMDB_KEY = os.getenv("IMDB_KEY")
 POSTER_URL = "https://image.tmdb.org/t/p/original"
 
 
@@ -18,19 +18,35 @@ def search_movie_by_text(query):
     r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
     r = r.json()
     for i in range(len(r)):
-        film = ["id", "title", "image"]
-        film[0] = r["results"][i]["id"]
-        film[1] = r["results"][i]["original_title"]
-        film[2] = POSTER_URL + r["results"][i]["poster_path"]
+        film = {
+            "id": r["results"][i]["id"],
+            "title": r["results"][i]["original_title"],
+            "image": POSTER_URL + r["results"][i]["poster_path"],
+        }
         film_list.append(film)
-    return film_list
+    return json.dumps(film_list)
+
+
+def search_movie_by_actor(actor_name):
+    film_list = []
+    params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": actor_name}
+    r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
+    r = r.json()
+    for i in range(len(r["results"][0]["known_for"])):
+        film = {
+            "id": r["results"][0]["known_for"][i]["id"],
+            "title": r["results"][0]["known_for"][i]["original_title"],
+            "image": POSTER_URL + r["results"][0]["known_for"][i]["poster_path"],
+        }
+        film_list.append(film)
+    print(film_list)
+    return json.dumps(film_list)
 
 
 def get_movie_details(movie_id):
     """Uses TheMovieDB API to get additional info about a movie.
     Returns a list containing all the genres and the summary of the movie"""
 
-    movie_info = ["genres", "summary"]
     genre_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US"}
     r = requests.get("https://api.themoviedb.org/3/movie/" + movie_id, params=params)
@@ -39,9 +55,8 @@ def get_movie_details(movie_id):
     for i in range(len(r["genres"])):
         genre_list.append(r["genres"][i]["name"])
 
-    movie_info[0] = genre_list
-    movie_info[1] = r["overview"]
-    return movie_info
+    movie_info = {"genres": genre_list, "summary": r["overview"]}
+    return json.dumps(movie_info)
 
 
 # Gets 20 options, can get multiple pages, some of the results are old and have already released
@@ -55,30 +70,13 @@ def get_upcoming():
     r = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
     r = r.json()
     for i in range(len(r["results"])):
-        film = ["title", "release_date"]
-        film[0] = r["results"][i]["original_title"]
-        film[1] = r["results"][i]["release_date"]
-        # film[2] = POSTER_URL + r["results"][i]["poster_path"]
+        film = {
+            "title": r["results"][i]["original_title"],
+            "release_date": r["results"][i]["release_date"],
+            "image": POSTER_URL + r["results"][i]["poster_path"],
+        }
         movie_list.append(film)
-    print(movie_list)
-
-
-# Gets 19 results, up to Nov 26th
-# ['Belfast', 'November 12'], ['Clifford the Big Red Dog', 'November 12'],
-# ['Apex', 'November 12'], ['Night Raiders', 'November 12'], ['Ghostbusters: Afterlife', 'November 19'],
-# ['Licorice Pizza', 'November 26'], ['Encanto', 'November 26'], ['Resident Evil: Welcome to Raccoon City', 'November 26'],
-# ['The Humans', 'November 26'], ['National Champions', 'November 26'], ['Drive My Car', 'November 26']
-def get_comingSoon():
-    movie_list = []
-    r = requests.get("https://imdb-api.com/en/API/ComingSoon/" + IMDB_KEY)
-    r = r.json()
-    for i in range(len(r["items"])):
-        film = []
-        film.append(r["items"][i]["title"])
-        # film.append(r["items"][i]["image"])
-        film.append(r["items"][i]["releaseState"])
-        movie_list.append(film)
-    print(movie_list)
+    return json.dumps(movie_list)
 
 
 def get_similar(movie_id):
@@ -88,14 +86,16 @@ def get_similar(movie_id):
     r = requests.get("https://appi.themoviedb.org/3/movie/" + params)
     r = r.json()
     for i in range(len(r["results"])):
-        film = ["title", "image"]
-        film[0] = r["results"][i]["title"]
-        film[1] = POSTER_URL + r["results"][i]["poster_path"]
+        film = {
+            "title": r["results"][i]["title"],
+            "image": POSTER_URL + r["results"][i]["poster_path"],
+        }
         similar_films.append(film)
-    print(similar_films)
+    return json.dumps(similar_films)
 
 
 # search_movie_by_text("Dune")
 # get_movie_details("562")
-get_upcoming()
+# get_upcoming()
 # get_comingSoon()
+search_movie_by_actor("Alan Rickman")
