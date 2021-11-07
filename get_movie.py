@@ -44,7 +44,7 @@ def get_movie_details(movie_id):
     return movie_info
 
 
-# Gets 20 options, can get multiple pages however some of the results are old and have already released
+# Gets 20 options, can get multiple pages, some of the results are old and have already released
 def get_upcoming():
     """Uses TheMovieDB API to get a"""
     movie_list = []
@@ -52,9 +52,9 @@ def get_upcoming():
     r = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
     r = r.json()
     for i in range(len(r["results"])):
-        film = []
-        film.append(r["results"][i]["original_title"])
-        film.append(r["results"][i]["release_date"])
+        film = ["title", "release_date"]
+        film[0] = r["results"][i]["original_title"]
+        film[1] = r["results"][i]["release_date"]
         movie_list.append(film)
     print(movie_list)
 
@@ -71,6 +71,20 @@ def get_comingSoon():
         film.append(r["items"][i]["releaseState"])
         movie_list.append(film)
     print(movie_list)
+
+
+def get_similar(movie_id):
+    """Gets a list of similar films to the movie specified by the movie id"""
+    similar_films = []
+    params = {"movie_id": movie_id, "api_key": MOVIEDB_KEY}
+    r = requests.get("https://appi.themoviedb.org/3/movie/" + params)
+    r = r.json()
+    for i in range(len(r["results"])):
+        film = ["title", "image"]
+        film[0] = r["results"][i]["title"]
+        film[1] = POSTER_URL + r["results"][i]["poster_path"]
+        similar_films.append(film)
+    print(similar_films)
 
 
 # search_movie_by_text("Dune")
