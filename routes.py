@@ -14,9 +14,13 @@ from flask import request, url_for, redirect, make_response
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
-from app import app, db
-from models import User
+from app import app
+# from models import User
 from auth_token import encode_auth_token, decode_auth_token
+from firebase_admin import db
+
+ref = db.reference('/')
+
 
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
@@ -83,20 +87,25 @@ def login_callback():
         user_id = userinfo_response.json()["sub"]
         username = userinfo_response.json()["given_name"].strip()
 
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            user = User(user_id=user_id, username=username)
-            db.session.add(user)
-            db.session.commit()
-        
-        auth_token = encode_auth_token(user.user_id)
-        print(auth_token)
+        auth_token = encode_auth_token(str(user_id))
 
         if auth_token:
             output = {
                 'auth_token': auth_token, 
-                'username': user.username
+                'username': username
             }
+
+            
+            users_ref = ref.child('Users').child(str(user_id))
+            if not users_ref.get():
+                print(f'new user: {user_id}')
+                users_ref.set({
+                    "Name": username
+                })
+            
+            else:
+                print(f'user {user_id} already exists')
+            
             
             return make_response(jsonify(output)), 200
 
@@ -106,10 +115,6 @@ def login_callback():
 
     
 
-# @app.route('/login/callback')
-# def login_callback():
-#     # Get authorization code Google sent back to you
-#     code = request.args.get('code')
 
 @app.route('/')
 def home():
