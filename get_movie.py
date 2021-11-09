@@ -30,19 +30,24 @@ def search_movie_by_text(query):
 
 
 def search_movie_by_actor(actor_name):
+    """Gets the first result from TheMovieDB API that matches the actor name. Returns a list of
+    movies that the actor is known for"""
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": actor_name}
     r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
     r = r.json()
     for i in range(len(r["results"][0]["known_for"])):
-        film = {
-            "movie_id": r["results"][0]["known_for"][i]["id"],
-            "movie_title": r["results"][0]["known_for"][i]["original_title"],
-            "movie_image": POSTER_URL + r["results"][0]["known_for"][i]["poster_path"],
-            "rating": r["results"][0]["known_for"][i]["vote_average"],
-        }
-        film_list.append(film)
-    print(film_list)
+        if (r["results"][0]["known_for"][i]["media_type"]) != "movie":
+            i = i + 1
+        else:
+            film = {
+                "movie_id": r["results"][0]["known_for"][i]["id"],
+                "movie_title": r["results"][0]["known_for"][i]["original_title"],
+                "movie_image": POSTER_URL
+                + r["results"][0]["known_for"][i]["poster_path"],
+                "rating": r["results"][0]["known_for"][i]["vote_average"],
+            }
+            film_list.append(film)
     return json.dumps(film_list)
 
 
@@ -62,12 +67,8 @@ def get_movie_details(movie_id):
     return json.dumps(movie_info)
 
 
-# Gets 20 options, can get multiple pages, some of the results are old and have already released
-# Example output
-# ['Encanto', '2021-11-24', 'image'], ['Ghostbusters: Afterlife', '2021-11-19', 'image'], ['Resident Evil: Welcome to Raccoon City', '2021-11-24', 'image'],
-# ['King Richard', '2021-11-19', 'image'], ['House of Gucci', '2021-11-24', 'image'], ['The Unforgivable', '2021-11-24', 'image']
 def get_upcoming():
-    """Uses TheMovieDB API"""
+    """Gets a list of upcoming movies and sorts them by release date"""
     movie_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "region": "US"}
     r = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
@@ -76,7 +77,7 @@ def get_upcoming():
         film = {
             "movie_title": r["results"][i]["original_title"],
             "release_date": r["results"][i]["release_date"],
-            # "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
         }
         movie_list.append(film)
     movie_list = sorted(movie_list, key=operator.itemgetter("release_date"))
@@ -97,10 +98,3 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return json.dumps(similar_films)
-
-
-# search_movie_by_text("Dune")
-# get_movie_details("562")
-get_upcoming()
-# get_comingSoon()
-# search_movie_by_actor("Alan Rickman")
