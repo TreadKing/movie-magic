@@ -97,8 +97,7 @@ def login_callback():
                 'auth_token': auth_token, 
                 'username': user.username
             }
-            print(output)
-            print(decode_auth_token(output['auth_token']))
+            
             return make_response(jsonify(output)), 200
 
         
