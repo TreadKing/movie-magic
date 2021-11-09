@@ -4,7 +4,7 @@ import os
 def encode_auth_token(user_id):
     try:
             payload = {
-                'user_id': user_id
+                'sub': user_id
             }
             return jwt.encode(
                 payload,
@@ -17,7 +17,7 @@ def encode_auth_token(user_id):
 
 def decode_auth_token(auth_token):
     try:
-        payload = jwt.decode(auth_token, os.environ.get("SECRET", None))
+        payload = jwt.decode(auth_token, os.environ.get("AUTH_SECRET", None), algorithms=["HS256"])
         return payload['sub']
 
     except jwt.ExpiredSignatureError:
