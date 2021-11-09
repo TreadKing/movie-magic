@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import operator
 from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
@@ -19,9 +20,10 @@ def search_movie_by_text(query):
     r = r.json()
     for i in range(len(r)):
         film = {
-            "id": r["results"][i]["id"],
-            "title": r["results"][i]["original_title"],
-            "image": POSTER_URL + r["results"][i]["poster_path"],
+            "movie_id": r["results"][i]["id"],
+            "movie_title": r["results"][i]["original_title"],
+            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+            "rating": r["results"][0]["known_for"][i]["vote_average"],
         }
         film_list.append(film)
     return json.dumps(film_list)
@@ -34,9 +36,10 @@ def search_movie_by_actor(actor_name):
     r = r.json()
     for i in range(len(r["results"][0]["known_for"])):
         film = {
-            "id": r["results"][0]["known_for"][i]["id"],
-            "title": r["results"][0]["known_for"][i]["original_title"],
-            "image": POSTER_URL + r["results"][0]["known_for"][i]["poster_path"],
+            "movie_id": r["results"][0]["known_for"][i]["id"],
+            "movie_title": r["results"][0]["known_for"][i]["original_title"],
+            "movie_image": POSTER_URL + r["results"][0]["known_for"][i]["poster_path"],
+            "rating": r["results"][0]["known_for"][i]["vote_average"],
         }
         film_list.append(film)
     print(film_list)
@@ -71,11 +74,12 @@ def get_upcoming():
     r = r.json()
     for i in range(len(r["results"])):
         film = {
-            "title": r["results"][i]["original_title"],
+            "movie_title": r["results"][i]["original_title"],
             "release_date": r["results"][i]["release_date"],
-            "image": POSTER_URL + r["results"][i]["poster_path"],
+            # "movie_image": POSTER_URL + r["results"][i]["poster_path"],
         }
         movie_list.append(film)
+    movie_list = sorted(movie_list, key=operator.itemgetter("release_date"))
     return json.dumps(movie_list)
 
 
@@ -87,8 +91,9 @@ def get_similar(movie_id):
     r = r.json()
     for i in range(len(r["results"])):
         film = {
-            "title": r["results"][i]["title"],
-            "image": POSTER_URL + r["results"][i]["poster_path"],
+            "movie_title": r["results"][i]["title"],
+            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+            "rating": r["results"][0]["known_for"][i]["vote_average"],
         }
         similar_films.append(film)
     return json.dumps(similar_films)
@@ -96,6 +101,6 @@ def get_similar(movie_id):
 
 # search_movie_by_text("Dune")
 # get_movie_details("562")
-# get_upcoming()
+get_upcoming()
 # get_comingSoon()
-search_movie_by_actor("Alan Rickman")
+# search_movie_by_actor("Alan Rickman")
