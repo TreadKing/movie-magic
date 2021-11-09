@@ -100,9 +100,7 @@ def login_callback():
             if not users_ref.get():
                 print(f'new user: {user_id}')
                 users_ref.set({
-                    "Name": username,
-                    "Friends": -1,
-                    "Saved_Movies": -1
+                    "Name": username
                 })
             
             else:
