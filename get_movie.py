@@ -13,7 +13,8 @@ POSTER_URL = "https://image.tmdb.org/t/p/original"
 def search_movie_by_text(query):
     """Uses TheMovieDB API to find a movie by text input.
     Returns a film list where each entry is a list containing information about a specific film"""
-
+    if query == "":
+        return Exception
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
     r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
@@ -32,6 +33,8 @@ def search_movie_by_text(query):
 def search_movie_by_actor(actor_name):
     """Gets the first result from TheMovieDB API that matches the actor name. Returns a list of
     movies that the actor is known for"""
+    if actor_name == "":
+        return Exception
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": actor_name}
     r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
@@ -98,3 +101,6 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return json.dumps(similar_films)
+
+
+search_movie_by_actor("")
