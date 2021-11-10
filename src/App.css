@@ -1,0 +1,134 @@
+/* Movie Search */
+
+body {
+    background-color: #333333;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.search-input-container {
+    display: inline-block;
+    background: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.search-input {
+    font-family: inherit;
+    width: 300px;
+    height: 35px;
+    padding-left: 15px;
+    font-size: 15px;
+    border: none;
+    margin: none;
+    margin-bottom: 3px;
+    margin-top: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.search-button {
+    font-family: inherit;
+    height: 35px;
+    border: none;
+    background-color: #333333;
+    color: white;
+    font-size: 15px;
+}
+
+.search-button:hover {
+    cursor: pointer;
+    background-color: #555555;
+}
+
+/* End Movie Search */
+
+/* Movie */
+
+.movie-container {
+    background-color: #8900b3;
+    border: 3px solid #008cff;
+    width: 300px;
+    margin: auto;
+    margin-top: 10px;
+    position: relative;
+    left: -35px;
+    border-radius: 5px;
+    font-size: 17px;
+    color: white;
+}
+
+.add-movie-button {
+    width: 30px;
+    height: 30px;
+    background-color: none;
+    border: none;
+    margin: 3px;
+    border-radius: 5px;
+    font-size: 25px;
+    color: green;
+    background-color: white(0, 233, 0);
+}
+
+.add-movie-button:hover {
+    background-color: green;
+    color: white;
+    cursor: pointer;
+}
+
+
+.add-movie-button:disabled {
+    background-color: #5d0179;
+    color: green;
+    cursor: arrow;
+}
+
+.add-movie-button:disabled:hover {
+    background-color: #5d0179;
+    color: green;
+    cursor: auto;
+}
+
+
+
+.remove-movie-button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    margin: 3px;
+    border-radius: 5px;
+    font-size: 25px;
+    color: red;
+    background-color: white(255, 0, 0);
+}
+
+.remove-movie-button:hover {
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+
+.remove-movie-button:disabled {
+    background-color: #5d0179;
+    color: red;
+    cursor: arrow;
+}
+
+.remove-movie-button:disabled:hover {
+    background-color: #5d0179;
+    color: red;
+    cursor: auto;
+}
+
+.movie-image {
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+/* End Movie */
