@@ -19,6 +19,8 @@ from app import app
 from auth_token import encode_auth_token, decode_auth_token
 from firebase_admin import db
 
+from get_movie import search_movie_by_actor, search_movie_by_text
+
 ref = db.reference('/')
 
 
@@ -113,12 +115,88 @@ def login_callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    
-
-
 @app.route('/')
 def home():
     return render_template('login.html')
+
+@app.route("/search/actor", methods=["POST"])
+def save_actor():
+    user_input = flask.request.form.get("user_input")
+    try:
+        api_results = search_movie_by_actor(user_input)
+    except Exception:
+        flask.flash("Enter a valid actor name")
+        return flask.redirect(flask.url_for("search"))
+
+    # Output results from api_results
+    
+
+
+@app.route("/search/movie", methods=["POST"])
+def save_movie():
+    user_input = flask.request.form.get("user_input")
+    try:
+        movie_text = search_movie_by_text(user_input)
+    except Exception:
+        flask.flash("Enter a valid movie name")
+        return flask.redirect(flask.url_for("search"))
+    # Output results from movie_text
+
+
+@app.route("/getWatchlist", methods=["POST"])
+def getList():
+    """Gets information from db to output to the user their watchlist"""
+    #Query information from db pertaining to user
+    return flask.redirect(flask.url_for("watchlist"))
+
+
+@app.route("/addToWatchlist", methods=["POST"])
+def addToList():
+    """After adding to the watchlist, send the user to the watchlist to see their change"""
+    ...
+
+    # Send user to view their own watchlist
+    return flask.redirect(flask.url_for("watchlist"))
+
+
+@app.route("/deleteFromWatchlist", methods=["POST"])
+def deleteFromList(movie_id):
+    """Find a movie object in the db and delete that entry from the watchlist"""
+    user_id = ""
+    ref = db.reference("Users").child(user_id).child("WatchList")
+    watchlist = ref.get()
+
+    for key, value in watchlist.items():
+        if value["movie_id"] == movie_id:
+            ref.child(key).set({})
+    # Once deleted, the page can be reloaded so that the entry is gone
+    return flask.redirect(flask.url_for("watchlist"))
+
+
+@app.route("/addToFriendslist", methods=["POST"])
+def addFriend(friend_id):
+    """Given a friend id, add an id to a user's friendlist"""
+    ...
+    
+
+@app.route("/deleteFromFriendsList", methods=["POST"])
+def deleteFriend(friend_id):
+    """Given a friend id, delete that id from a user's friendlist"""
+    user_id = ""
+    ref = db.reference("Users").child(user_id).child("FriendList")
+    friendlist = ref.get()
+
+    for key, value in friendlist.items():
+        if value["friend_id"] == friend_id:
+            ref.child(key).set({})
+
+    return flask.redirect(flask.url_for("watchlist"))
+
+
+@app.route("/getUsers", methods=["POST"])
+def getUsers():
+    """Query all users from db and output the list for users to view"""
+    ...
 
 if __name__ == "__main__":
     app.run(
