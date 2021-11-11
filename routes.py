@@ -115,9 +115,6 @@ def login_callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    
-
-
 @app.route('/')
 def home():
     return render_template('login.html')
@@ -149,7 +146,7 @@ def save_movie():
 @app.route("/getWatchlist", methods=["POST"])
 def getList():
     """Gets information from db to output to the user their watchlist"""
-    ...
+    #Query information from db pertaining to user
     return flask.redirect(flask.url_for("watchlist"))
 
 
