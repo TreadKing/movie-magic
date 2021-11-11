@@ -107,11 +107,11 @@ def login_callback():
                 print(f'user {user_id} already exists')
             
             
-            return make_response(jsonify(output)), 200
+            return make_response(jsonify(output), 200)
 
         
     else:
-        return "User email not available or not verified by Google.", 400
+        return make_response("User email not available or not verified by Google.", 400)
 
 @app.route('/')
 def home():
@@ -155,22 +155,43 @@ def getList():
     watch_list_ref = db.reference('/').child('Users').child(str(user_id)).child('WatchList')
     watch_list = watch_list_ref.get()
 
-    return make_response(jsonify(watch_list)), 200
+    return make_response(jsonify(watch_list), 200)
 
 
 @app.route("/addToWatchlist", methods=["POST"])
 def addToList():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
-    ...
+    '''
+    auth_token
+    staus (unwatched, watching, dropped, finished)
+    movieID
+    '''
+
+    auth_token = request.args['auth_token']
+    user_id = decode_auth_token(auth_token)
+    if user_id == 'Invalid token. Please log in again.':
+        return make_response(jsonify({'error': 'Invalid token. Please log in again.'})), 500
+
+    status = request.args['status']
+    movie_id = request.args['MovieID']
+
+    movie_id_ref = db.reference('/').child('Users').child(str(user_id)).child('WatchList').child(str(movie_id))
+    movie_id_ref.set({
+        'Status': status
+    })
+
 
     # Send user to view their own watchlist
-    return flask.redirect(flask.url_for("watchlist"))
+    return make_response(200)
 
 
 @app.route("/deleteFromWatchlist", methods=["POST"])
 def deleteFromList(movie_id):
     """Find a movie object in the db and delete that entry from the watchlist"""
-    user_id = ""
+    auth_token = request.args['auth_token']
+    user_id = decode_auth_token(auth_token)
+    movie_id = request.args['movieID']
+
     ref = db.reference("Users").child(user_id).child("WatchList")
     watchlist = ref.get()
 
@@ -178,12 +199,17 @@ def deleteFromList(movie_id):
         if value["movie_id"] == movie_id:
             ref.child(key).set({})
     # Once deleted, the page can be reloaded so that the entry is gone
-    return flask.redirect(flask.url_for("watchlist"))
+
+    if db.reference("Users").child(user_id).child("WatchList").child().get():
+        return make_response(200)
+    else:
+        return make_response(500)
 
 
 @app.route("/addToFriendslist", methods=["POST"])
 def addFriend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
+    # for sprint 2
     ...
     
 
@@ -204,6 +230,7 @@ def deleteFriend(friend_id):
 @app.route("/getUsers", methods=["POST"])
 def getUsers():
     """Query all users from db and output the list for users to view"""
+    # don't think we need till sprint 2
     ...
 
 if __name__ == "__main__":
