@@ -21,7 +21,6 @@ from firebase_admin import db
 
 from get_movie import search_movie_by_actor, search_movie_by_text
 
-ref = db.reference('/')
 
 
 # Configuration
@@ -97,8 +96,7 @@ def login_callback():
                 'username': username
             }
 
-            
-            users_ref = ref.child('Users').child(str(user_id))
+            users_ref = db.reference('/').child('Users').child(str(user_id))
             if not users_ref.get():
                 print(f'new user: {user_id}')
                 users_ref.set({
@@ -147,7 +145,17 @@ def save_movie():
 def getList():
     """Gets information from db to output to the user their watchlist"""
     #Query information from db pertaining to user
-    return flask.redirect(flask.url_for("watchlist"))
+    auth_token = request.args['auth_token']
+
+    user_id = decode_auth_token(auth_token)
+
+    if user_id == 'Invalid token. Please log in again.':
+        return make_response(jsonify({'error': 'Invalid token. Please log in again.'})), 500
+
+    watch_list_ref = db.reference('/').child('Users').child(str(user_id)).child('WatchList')
+    watch_list = watch_list_ref.get()
+
+    return make_response(jsonify(watch_list)), 200
 
 
 @app.route("/addToWatchlist", methods=["POST"])
