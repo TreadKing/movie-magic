@@ -145,6 +145,7 @@ def save_movie():
 def getList():
     """Gets information from db to output to the user their watchlist"""
     #Query information from db pertaining to user
+    print(request.args)
     auth_token = request.args['auth_token']
 
     user_id = decode_auth_token(auth_token)
@@ -170,7 +171,7 @@ def addToList():
     auth_token = request.args['auth_token']
     user_id = decode_auth_token(auth_token)
     if user_id == 'Invalid token. Please log in again.':
-        return make_response(jsonify({'error': 'Invalid token. Please log in again.'})), 500
+        return make_response(jsonify({'error': 'Invalid token. Please log in again.'}), 500)
 
     status = request.args['status']
     movie_id = request.args['MovieID']
@@ -216,7 +217,6 @@ def addFriend(friend_id):
 @app.route("/deleteFromFriendsList", methods=["POST"])
 def deleteFriend(friend_id):
     """Given a friend id, delete that id from a user's friendlist"""
-    user_id = ""
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
