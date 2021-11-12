@@ -137,6 +137,7 @@ def getList():
     # From the frontend, it fetches /getWatchlist with options containing "userId"
     # Then return list of dictionaries containing {"movie_id", "movie_title", "movie_image","rating"}
 
+    # Needs to receive a user_id
     user_id = ""  # 100372782874119952908 Sample id to use
     ref = db.reference("Users").child(user_id).child("WatchList")
     watchlist = ref.get()
@@ -145,18 +146,22 @@ def getList():
 
 
 @app.route("/addToWatchlist", methods=["POST"])
-def addToList():
+def addToList(movie_id):
     """After adding to the watchlist, send the user to the watchlist to see their change"""
+    # Needs to receieve a movie id and a user id
     user_id = ""
     ref = db.reference("Users").child(user_id).child("WatchList")
     watchlist = ref.get()
 
-    # Insert movie to watchlist
+    # Add movie_id to out database
+    # return "", 200
 
 
 @app.route("/deleteFromWatchlist", methods=["POST"])
 def deleteFromList(movie_id):
     """Find a movie object in the db and delete that entry from the watchlist"""
+
+    # Needs to receive a movie id and a user id
     user_id = ""
     ref = db.reference("Users").child(user_id).child("WatchList")
     watchlist = ref.get()
@@ -164,11 +169,13 @@ def deleteFromList(movie_id):
     for key, value in watchlist.items():
         if value["movie_id"] == movie_id:
             ref.child(key).set({})
+    return "", 200
 
 
 @app.route("/addToFriendslist", methods=["POST"])
 def addFriend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
+    # Needs to receive a user id and a friend id
     user_id = ""
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
@@ -179,6 +186,7 @@ def addFriend(friend_id):
 @app.route("/deleteFromFriendsList", methods=["POST"])
 def deleteFriend(friend_id):
     """Given a friend id, delete that id from a user's friendlist"""
+    # Needs to receive a user id and a friend id
     user_id = ""
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
