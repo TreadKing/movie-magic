@@ -121,8 +121,9 @@ def search_movie():
 
     user_input = flask.request.form.get("user_input")
     try:
-        print(user_input)
+        # print(user_input)
         api_results = search(user_input)
+        # print(api_results)
         # return api_results
         return render_template("search.html")
     except Exception:

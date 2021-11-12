@@ -2,7 +2,7 @@ import unittest
 from flask import url_for, request
 from werkzeug.utils import redirect
 from routes import get_google_provider_cfg, client
-from get_movie import search_movie_by_actor, search_movie_by_text
+from get_movie import search
 
 
 class TestStringMethods(unittest.TestCase):
@@ -22,22 +22,22 @@ class TestStringMethods(unittest.TestCase):
 
     def test_save_actor(self):
         user_input = "Russell Brand"
-        api_results = search_movie_by_actor(user_input)
+        api_results = search(user_input)
         self.assertIsNotNone(api_results)
         movie_titles_list = []
         for movie in api_results:
             movie_titles_list.append(movie["movie_title"])
         self.assertIsNotNone(movie_titles_list)
-        self.assertIn("Arthur", movie_titles_list)
+        self.assertIn("Despicable Me", movie_titles_list)
 
     def test_save_text(self):
         user_input = ""
-        movie_text = search_movie_by_text(user_input)
-        self.assertRaises(Exception, search_movie_by_text)
+        movie_text = search(user_input)
+        self.assertRaises(Exception, search)
         self.assertIsNone(movie_text)
 
         user_input = "Rush Hour 3"
-        movie_text = search_movie_by_text(user_input)
+        movie_text = search(user_input)
         self.assertIn("Rush Hour 3", movie_text)
 
 
