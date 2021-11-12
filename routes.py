@@ -121,33 +121,39 @@ def home():
 
 @app.route("/search/actor", methods=["POST"])
 def save_actor():
+
     user_input = flask.request.form.get("user_input")
     try:
         api_results = search_movie_by_actor(user_input)
     except Exception:
-        flask.flash("Enter a valid actor name")
-        return flask.redirect(flask.url_for("search"))
+        # Give some sort of error that that actor name does not exist
+    
+    # Return user_id, title, image 
 
-    # Output results from api_results
     
 
 
 @app.route("/search/movie", methods=["POST"])
 def save_movie():
+    #
     user_input = flask.request.form.get("user_input")
     try:
         movie_text = search_movie_by_text(user_input)
     except Exception:
-        flask.flash("Enter a valid movie name")
-        return flask.redirect(flask.url_for("search"))
-    # Output results from movie_text
+        # Give some sort of error that the movie title is wrong/ does not exist
 
 
 @app.route("/getWatchlist", methods=["POST"])
 def getList():
     """Gets information from db to output to the user their watchlist"""
-    #Query information from db pertaining to user
-    return flask.redirect(flask.url_for("watchlist"))
+    # From the frontend, it fetches /getWatchlist with options containing "userId"
+    # Then return list of dictionaries containing {"movie_id", "movie_title", "movie_image","rating"}
+    
+    user_id = ""
+    ref = db.reference("Users").child(user_id).child("WatchList")
+    watchlist = ref.get()
+
+    return watchlist
 
 
 @app.route("/addToWatchlist", methods=["POST"])
@@ -155,8 +161,7 @@ def addToList():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     ...
 
-    # Send user to view their own watchlist
-    return flask.redirect(flask.url_for("watchlist"))
+    
 
 
 @app.route("/deleteFromWatchlist", methods=["POST"])
@@ -169,8 +174,7 @@ def deleteFromList(movie_id):
     for key, value in watchlist.items():
         if value["movie_id"] == movie_id:
             ref.child(key).set({})
-    # Once deleted, the page can be reloaded so that the entry is gone
-    return flask.redirect(flask.url_for("watchlist"))
+    
 
 
 @app.route("/addToFriendslist", methods=["POST"])
@@ -190,7 +194,7 @@ def deleteFriend(friend_id):
         if value["friend_id"] == friend_id:
             ref.child(key).set({})
 
-    return flask.redirect(flask.url_for("watchlist"))
+    
 
 
 @app.route("/getUsers", methods=["POST"])
