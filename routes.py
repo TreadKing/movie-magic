@@ -116,19 +116,35 @@ def home():
     return render_template("login.html")
 
 
+def on_watchlist(user_id):
+    on_watchlist = []
+    ref = db.reference("Users").child(user_id).child("WatchList")
+    watchlist = ref.get()
+
+    for key, value in watchlist.items():
+        on_watchlist.append(key)
+    return on_watchlist
+
+
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
 
     user_input = flask.request.form.get("user_input")
     try:
-        # print(user_input)
+        films_on_watchlist = on_watchlist("100372782874119952908")
         api_results = search(user_input)
-        # print(api_results)
-        # return api_results
+        films_from_search = []
+        for item in api_results:
+            films_from_search.append(str(item["movie_id"]))
+        already_added = list(set(films_from_search) & set(films_on_watchlist))
+
+        results = {"api_results": api_results, "on_watchlist": already_added}
+
         return render_template("search.html")
     except Exception:
         # Give some sort of error that that actor name does not exist
         # return None
+        print("Error")
         return render_template("search.html")
 
 
