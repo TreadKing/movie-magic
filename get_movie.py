@@ -21,6 +21,7 @@ def search(query):
     r = r.json()
     if r["total_results"] != 0:
         for i in range(len(r)):
+
             film = {
                 "movie_id": r["results"][i]["id"],
                 "movie_title": r["results"][i]["original_title"],
@@ -44,7 +45,8 @@ def search(query):
                     "rating": r["results"][0]["known_for"][i]["vote_average"],
                 }
                 film_list.append(film)
-    return json.dumps(film_list)
+    # print(film_list)
+    return film_list
 
 
 def get_movie_details(movie_id):
@@ -94,3 +96,6 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return json.dumps(similar_films)
+
+
+search("Vin Diesel")
