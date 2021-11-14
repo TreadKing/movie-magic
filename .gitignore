@@ -1,3 +1,5 @@
 .env
 __pycache__
 firebase.json
+db_schema.json
+db_test.py
