@@ -20,7 +20,7 @@ from app import app
 from auth_token import encode_auth_token, decode_auth_token
 from firebase_admin import db
 
-from get_movie import search_movie_by_actor, search_movie_by_text
+from get_movie import search
 
 
 # Configuration
@@ -94,6 +94,7 @@ def login_callback():
             output = {"auth_token": auth_token, "username": username}
 
             users_ref = db.reference("/").child("Users").child(str(user_id))
+
             if not users_ref.get():
                 print(f"new user: {user_id}")
                 users_ref.set({"Name": username})
@@ -109,31 +110,40 @@ def login_callback():
 
 @app.route("/")
 def home():
+    # If user is already logged in, skip this step
     return render_template("login.html")
 
 
-@app.route("/search/actor", methods=["POST"])
-def save_actor():
+def on_watchlist(user_id):
+    on_watchlist = []
+    ref = db.reference("Users").child(user_id).child("WatchList")
+    watchlist = ref.get()
+
+    for key, value in watchlist.items():
+        on_watchlist.append(key)
+    return on_watchlist
+
+@app.route("/search", methods=["POST", "GET"])
+def search_movie():
+
     user_input = flask.request.form.get("user_input")
     try:
-        api_results = search_movie_by_actor(user_input)
+        films_on_watchlist = on_watchlist("100372782874119952908")
+        api_results = search(user_input)
+        films_from_search = []
+        for item in api_results:
+            films_from_search.append(str(item["movie_id"]))
+        already_added = list(set(films_from_search) & set(films_on_watchlist))
+
+        results = {"api_results": api_results, "on_watchlist": already_added}
+
+        return render_template("search.html")
     except Exception:
-        flask.flash("Enter a valid actor name")
-        return flask.redirect(flask.url_for("search"))
+        # Give some sort of error that that actor name does not exist
+        # return None
+        print("Error")
+        return render_template("search.html")
 
-    # Output results from api_results
-
-
-@app.route("/search/movie", methods=["POST"])
-def save_movie():
-    user_input = flask.request.form.get("user_input")
-    try:
-        movie_text = search_movie_by_text(user_input)
-    except Exception:
-        flask.flash("Enter a valid movie name")
-        return flask.redirect(flask.url_for("search"))
-    # Output results from movie_text
-    return movie_text
 
 
 @app.route("/getWatchlist", methods=["POST"])
@@ -159,8 +169,9 @@ def getList():
     return make_response(jsonify(watch_list)), 200
 
 
+
 @app.route("/addToWatchlist", methods=["POST"])
-def addToList():
+def addToList(movie_id):
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     """
     auth_token
@@ -215,8 +226,12 @@ def deleteFromList():
 @app.route("/addToFriendslist", methods=["POST"])
 def addFriend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
-    # for sprint 2
-    ...
+    # Needs to receive a user id and a friend id
+    user_id = ""
+    ref = db.reference("Users").child(user_id).child("FriendList")
+    friendlist = ref.get()
+
+    # Insert friend id to friends list
 
 
 @app.route("/deleteFromFriendsList", methods=["POST"])
@@ -229,6 +244,7 @@ def deleteFriend():
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
             500
         )
+      
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
@@ -238,12 +254,17 @@ def deleteFriend():
 
     return make_response(jsonify({"message": "delete sucessful"})), 200
 
-
 @app.route("/getUsers", methods=["POST"])
 def getUsers():
     """Query all users from db and output the list for users to view"""
-    # don't think we need till sprint 2
-    ...
+    names_list = []
+    ref = db.reference("Users")
+    names = ref.get()
+    for key, value in names.items():
+        names_list.append(value["Name"])
+    # return names_list
+    return render_template("users.html")
+
 
 
 if __name__ == "__main__":

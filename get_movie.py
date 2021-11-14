@@ -10,48 +10,43 @@ MOVIEDB_KEY = os.getenv("MOVIEDB_KEY")
 POSTER_URL = "https://image.tmdb.org/t/p/original"
 
 
-def search_movie_by_text(query):
-    """Uses TheMovieDB API to find a movie by text input.
-    Returns a film list where each entry is a list containing information about a specific film"""
+def search(query):
+    """Performs two API calls, one for searching by movie name and another for searching
+    by actor name"""
     if query == "":
         return Exception
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
     r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
     r = r.json()
-    for i in range(len(r)):
-        film = {
-            "movie_id": r["results"][i]["id"],
-            "movie_title": r["results"][i]["original_title"],
-            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
-            "rating": r["results"][0]["known_for"][i]["vote_average"],
-        }
-        film_list.append(film)
-    return json.dumps(film_list)
+    if r["total_results"] != 0:
+        for i in range(len(r)):
 
-
-def search_movie_by_actor(actor_name):
-    """Gets the first result from TheMovieDB API that matches the actor name. Returns a list of
-    movies that the actor is known for"""
-    if actor_name == "":
-        return Exception
-    film_list = []
-    params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": actor_name}
-    r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
-    r = r.json()
-    for i in range(len(r["results"][0]["known_for"])):
-        if (r["results"][0]["known_for"][i]["media_type"]) != "movie":
-            i = i + 1
-        else:
             film = {
-                "movie_id": r["results"][0]["known_for"][i]["id"],
-                "movie_title": r["results"][0]["known_for"][i]["original_title"],
-                "movie_image": POSTER_URL
-                + r["results"][0]["known_for"][i]["poster_path"],
-                "rating": r["results"][0]["known_for"][i]["vote_average"],
+                "movie_id": r["results"][i]["id"],
+                "movie_title": r["results"][i]["original_title"],
+                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+                "rating": r["results"][i]["vote_average"],
             }
             film_list.append(film)
-    return json.dumps(film_list)
+    # Tests if the query is a person and appends known for movies to the film list
+    r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
+    r = r.json()
+    if r["total_results"] != 0:
+        for i in range(len(r["results"][0]["known_for"])):
+            if (r["results"][0]["known_for"][i]["media_type"]) != "movie":
+                i = i + 1
+            else:
+                film = {
+                    "movie_id": r["results"][0]["known_for"][i]["id"],
+                    "movie_title": r["results"][0]["known_for"][i]["original_title"],
+                    "movie_image": POSTER_URL
+                    + r["results"][0]["known_for"][i]["poster_path"],
+                    "rating": r["results"][0]["known_for"][i]["vote_average"],
+                }
+                film_list.append(film)
+    # print(film_list)
+    return film_list
 
 
 def get_movie_details(movie_id):
@@ -103,4 +98,4 @@ def get_similar(movie_id):
     return json.dumps(similar_films)
 
 
-search_movie_by_actor("")
+search("Vin Diesel")
