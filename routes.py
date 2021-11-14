@@ -148,7 +148,7 @@ def getList():
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
+            500
         )
 
     watch_list_ref = (
@@ -156,7 +156,7 @@ def getList():
     )
     watch_list = watch_list_ref.get()
 
-    return make_response(jsonify(watch_list), 200)
+    return make_response(jsonify(watch_list)), 200
 
 
 @app.route("/addToWatchlist", methods=["POST"])
@@ -175,7 +175,7 @@ def addToList():
             jsonify({"error": "Invalid token. Please log in again."}), 500
         )
 
-    status = request.args["status"]
+    status = request.args["Status"]
     movie_id = request.args["MovieID"]
 
     movie_id_ref = (
@@ -188,28 +188,28 @@ def addToList():
     movie_id_ref.set({"Status": status})
 
     # Send user to view their own watchlist
-    return make_response(200)
+    return make_response(jsonify({"message": "add successful"})), 200
 
 
 @app.route("/deleteFromWatchlist", methods=["POST"])
-def deleteFromList(movie_id):
+def deleteFromList():
     """Find a movie object in the db and delete that entry from the watchlist"""
     auth_token = request.args["auth_token"]
     user_id = decode_auth_token(auth_token)
-    movie_id = request.args["movieID"]
+    if user_id == "Invalid token. Please log in again.":
+        return (
+            make_response(jsonify({"error": "Invalid token. Please log in again."})),
+            500
+        )
 
-    ref = db.reference("Users").child(user_id).child("WatchList")
-    watchlist = ref.get()
+    movie_id = request.args["MovieID"]
+    movie_id_ref = db.reference("Users").child(user_id).child("WatchList").child(movie_id)
+    movie_id_ref.set({})
 
-    for key, value in watchlist.items():
-        if value["movie_id"] == movie_id:
-            ref.child(key).set({})
-    # Once deleted, the page can be reloaded so that the entry is gone
-
-    if db.reference("Users").child(user_id).child("WatchList").child().get():
-        return make_response(200)
+    if not movie_id_ref.get():
+        return make_response(jsonify({"message": "delete successful"})), 200
     else:
-        return make_response(500)
+        return make_response(jsonify({"message": "delete not successful"})), 500
 
 
 @app.route("/addToFriendslist", methods=["POST"])
@@ -220,8 +220,15 @@ def addFriend(friend_id):
 
 
 @app.route("/deleteFromFriendsList", methods=["POST"])
-def deleteFriend(friend_id):
+def deleteFriend():
     """Given a friend id, delete that id from a user's friendlist"""
+    auth_token = request.args["auth_token"]
+    user_id = decode_auth_token(auth_token)
+    if user_id == "Invalid token. Please log in again.":
+        return (
+            make_response(jsonify({"error": "Invalid token. Please log in again."})),
+            500
+        )
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
@@ -229,7 +236,7 @@ def deleteFriend(friend_id):
         if value["friend_id"] == friend_id:
             ref.child(key).set({})
 
-    return flask.redirect(flask.url_for("watchlist"))
+    return make_response(jsonify({"message": "delete sucessful"})), 200
 
 
 @app.route("/getUsers", methods=["POST"])
