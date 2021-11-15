@@ -135,9 +135,19 @@ def search_movie():
     so that the Frontend JS knows what movies from the API search can not be added to the user's watchlist."""
     # I tested by putting a movie id 671 under by Name in the db. By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    user_input = flask.request.form.get("user_input")
+    
+    auth_token = request.args["auth_token"]
+    user_id = decode_auth_token(auth_token)
+    if user_id == "Invalid token. Please log in again.":
+        return make_response(
+            jsonify({"error": "Invalid token. Please log in again."}), 500
+        )
+
+    # user_input = flask.request.form.get("user_input")
+    user_input = request.args["searchKey"]
     try:
-        films_on_watchlist = on_watchlist("116405330661820156295")
+        # films_on_watchlist = on_watchlist("116405330661820156295")
+        films_on_watchlist = on_watchlist(user_id)
         api_results = search(user_input)
         films_from_search = []
         for item in api_results:
@@ -149,19 +159,21 @@ def search_movie():
             for key in api_results:
                 if key["movie_id"] == movie_id:
                     key["on_watchlist"] = True
-        return render_template("search.html")
+
+        return make_response(jsonify(api_results)), 200
+
     except Exception as e:
         # Give some sort of error that that actor name does not exist
         # return None
         print(e)
-        return render_template("search.html")
+        return make_response(jsonify({"message": str(e)})), 500
 
 
 @app.route("/getWatchlist", methods=["POST"])
 def getList():
     """Gets information from db to output to the user their watchlist"""
     # Query information from db pertaining to user
-    print(request.args)
+
     auth_token = request.args["auth_token"]
 
     user_id = decode_auth_token(auth_token)
