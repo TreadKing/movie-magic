@@ -189,24 +189,27 @@ def getList():
     )
     watch_list = watch_list_ref.get()
 
-    watch_list_output = []
+    try:
+        watch_list_output = []
+        for key in watch_list:
+            watch_list_item = {
+                "movie_id": key,
+                "movie_title": watch_list[key]["movie_title"],
+                "movie_image": watch_list[key]["movie_image"],
+                "rating": watch_list[key]["rating"],
+                "status": watch_list[key]["status"],
+                "comment": None
+            }
+            watch_list_output.append(watch_list_item)
 
-    for key in watch_list:
-        watch_list_item = {
-            "movie_id": key,
-            "movie_title": watch_list[key]["movie_title"],
-            "movie_image": watch_list[key]["movie_image"],
-            "rating": watch_list[key]["rating"],
-            "status": watch_list[key]["status"],
-            "comment": None
-        }
-        watch_list_output.append(watch_list_item)
+    except:
+        watch_list_output = []
 
     return make_response(jsonify(watch_list_output)), 200
 
 
 @app.route("/addToWatchlist", methods=["POST"])
-def addToList(movie_id):
+def addToList():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     """
     auth_token
@@ -238,15 +241,19 @@ def addToList(movie_id):
         .child(str(movie_id))
     )
 
-    movie_id_ref.set({
-        "status": 'unwatched',
-        "movie_title": movie_title,
-        "movie_image": movie_image,
-        "rating": rating
-    })
+    if not movie_id_ref.get():
+        movie_id_ref.set({
+            "status": 'unwatched',
+            "movie_title": movie_title,
+            "movie_image": movie_image,
+            "rating": rating
+        })
 
-    # Send user to view their own watchlist
-    return make_response(jsonify({"message": "add successful"})), 200
+        # Send user to view their own watchlist
+        return make_response(jsonify({"message": "add successful"})), 200
+     
+    else:
+        return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
 @app.route("/deleteFromWatchlist", methods=["POST"])
@@ -257,10 +264,10 @@ def deleteFromList():
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
+            500
         )
 
-    movie_id = request.args["MovieID"]
+    movie_id = request.args["movie_id"]
     movie_id_ref = (
         db.reference("users").child(user_id).child("watch_list").child(movie_id)
     )
