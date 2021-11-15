@@ -144,7 +144,7 @@ def search_movie():
         )
 
     # user_input = flask.request.form.get("user_input")
-    user_input = request.args["searchKey"]
+    user_input = request.args["search_key"]
     try:
         # films_on_watchlist = on_watchlist("116405330661820156295")
         films_on_watchlist = on_watchlist(user_id)
