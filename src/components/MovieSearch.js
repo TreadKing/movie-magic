@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Movie from './Movie.js';
 
 
-function MovieSearch() {
+function MovieSearch(props) {
 
     const authToken = props.authToken
 
@@ -32,8 +32,8 @@ function MovieSearch() {
 
     function displayMovies() {
         const display = []
-        for (var i = 0; i < apiResults.length; i++) {
-            var movie = apiResults[i]
+        for (var i = 0; i < searchResults.length; i++) {
+            var movie = searchResults[i]
             display.push(<Movie
                 authToken={authToken}
                 movieTitle={movie['movie_title']}
@@ -50,7 +50,6 @@ function MovieSearch() {
 
     return <>
         <span className="search-input-container">
-            {/* <span className="search-input-label">Enter an actor's name</span> */}
             <input placeholder="Enter an actor's name"
                 className="search-input"
                 type="text"
