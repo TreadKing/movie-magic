@@ -1,37 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie.js';
-import data1 from '../sample_data/01.js';
-import data4 from '../sample_data/04.js';
 
 
 
 function MovieSearch() {
 
-    const [watchlistMovies, setWatchlistMovies] = useState([])
+
+    const [watchlist, setWatchlist] = useState([])
 
     useEffect(getMovies)
 
-    function getMovies() {
-        setWatchlistMovies([data1, data4])
-        setTextInput('')
+    function getWatchlist() {
 
-        // const options = {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ 'userId': textInput, 'userId': userId })
-        // }
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'auth_token': authToken
+            })
+        }
 
-        // fetch('/getWatchlist', options)
-        //     .then(response => response.json())
-        //     .then(searchResult => setWatchlistMovies(searchResult))
+        fetch('/getWatchlist', options)
+            .then(response => response.json())
+            .then(searchResult => setWatchlistMovies(searchResult))
     }
 
     function displayMovies() {
         const display = []
+        const movie
         for (var i = 0; i < watchlistMovies.length; i++) {
-            display.push(<Movie data={watchlistMovies[i]} key={i} />)
+            movie = watchlistMovies[i]
+            display.push(<Movie
+                movieId={movie['movie_id']}
+                movieTitle={movie['movie_title']}
+                movieId={movie['movie_id']}
+                movieImage={movie['movie_image']}
+                rating={movie['rating']}
+                status={movie['status']}
+                comment={movie['comment']}
+                key={i}
+            />
+            )
         }
-        return <div className="wathlist-display">{display}</div>
+        return <div className="watchlist-display">{display}</div>
     }
 
     return <>
