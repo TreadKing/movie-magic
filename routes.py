@@ -13,6 +13,7 @@ import flask
 from flask import request, url_for, redirect, make_response
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
+from requests import api
 
 from app import app
 
@@ -102,7 +103,8 @@ def login_callback():
             else:
                 print(f"user {user_id} already exists")
 
-            return make_response(jsonify(output), 200)
+            # return make_response(jsonify(output), 200)
+            return render_template("search.html")
 
     else:
         return make_response("User email not available or not verified by Google.", 400)
@@ -121,36 +123,57 @@ def on_watchlist(user_id):
 
     for key, value in watchlist.items():
         on_watchlist.append(key)
+        print(value)
     return on_watchlist
+
 
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
+    """The function gets all the movie ids from a user's watchlist and all the movie ids from the API call.
+    Then a list intersection is performed to determine what movie ids already appear in the watchlist.
+    For each value in the list intersection, the value of 'on_watchlist' in the API results is changed to True
+    so that the Frontend JS knows what movies from the API search can not be added to the user's watchlist."""
+    # I tested by putting a movie id 671 under by Name in the db. By searching for 'Alan Rickman', the movie
+    # from the search will have 'on_watchlist' = True
+    
+    auth_token = request.args["auth_token"]
+    user_id = decode_auth_token(auth_token)
+    if user_id == "Invalid token. Please log in again.":
+        return make_response(
+            jsonify({"error": "Invalid token. Please log in again."}), 500
+        )
 
-    user_input = flask.request.form.get("user_input")
+    # user_input = flask.request.form.get("user_input")
+    user_input = request.args["searchKey"]
     try:
-        films_on_watchlist = on_watchlist("100372782874119952908")
+        # films_on_watchlist = on_watchlist("116405330661820156295")
+        films_on_watchlist = on_watchlist(user_id)
         api_results = search(user_input)
         films_from_search = []
         for item in api_results:
             films_from_search.append(str(item["movie_id"]))
         already_added = list(set(films_from_search) & set(films_on_watchlist))
 
-        results = {"api_results": api_results, "on_watchlist": already_added}
+        for item in already_added:
+            movie_id = int(item)
+            for key in api_results:
+                if key["movie_id"] == movie_id:
+                    key["on_watchlist"] = True
 
-        return render_template("search.html")
-    except Exception:
+        return make_response(jsonify(api_results)), 200
+
+    except Exception as e:
         # Give some sort of error that that actor name does not exist
         # return None
-        print("Error")
-        return render_template("search.html")
-
+        print(e)
+        return make_response(jsonify({"message": str(e)})), 500
 
 
 @app.route("/getWatchlist", methods=["POST"])
 def getList():
     """Gets information from db to output to the user their watchlist"""
     # Query information from db pertaining to user
-    print(request.args)
+
     auth_token = request.args["auth_token"]
 
     user_id = decode_auth_token(auth_token)
@@ -158,7 +181,7 @@ def getList():
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500
+            500,
         )
 
     watch_list_ref = (
@@ -167,7 +190,6 @@ def getList():
     watch_list = watch_list_ref.get()
 
     return make_response(jsonify(watch_list)), 200
-
 
 
 @app.route("/addToWatchlist", methods=["POST"])
@@ -210,11 +232,13 @@ def deleteFromList():
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500
+            500,
         )
 
     movie_id = request.args["MovieID"]
-    movie_id_ref = db.reference("Users").child(user_id).child("WatchList").child(movie_id)
+    movie_id_ref = (
+        db.reference("Users").child(user_id).child("WatchList").child(movie_id)
+    )
     movie_id_ref.set({})
 
     if not movie_id_ref.get():
@@ -242,9 +266,9 @@ def deleteFriend():
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500
+            500,
         )
-      
+
     ref = db.reference("Users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
@@ -253,6 +277,7 @@ def deleteFriend():
             ref.child(key).set({})
 
     return make_response(jsonify({"message": "delete sucessful"})), 200
+
 
 @app.route("/getUsers", methods=["POST"])
 def getUsers():
@@ -264,7 +289,6 @@ def getUsers():
         names_list.append(value["Name"])
     # return names_list
     return render_template("users.html")
-
 
 
 if __name__ == "__main__":

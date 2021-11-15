@@ -27,6 +27,7 @@ def search(query):
                 "movie_title": r["results"][i]["original_title"],
                 "movie_image": POSTER_URL + r["results"][i]["poster_path"],
                 "rating": r["results"][i]["vote_average"],
+                "on_watchlist": False,
             }
             film_list.append(film)
     # Tests if the query is a person and appends known for movies to the film list
@@ -43,9 +44,9 @@ def search(query):
                     "movie_image": POSTER_URL
                     + r["results"][0]["known_for"][i]["poster_path"],
                     "rating": r["results"][0]["known_for"][i]["vote_average"],
+                    "on_watchlist": False,
                 }
                 film_list.append(film)
-    # print(film_list)
     return film_list
 
 
@@ -96,6 +97,3 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return json.dumps(similar_films)
-
-
-search("Vin Diesel")
