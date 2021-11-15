@@ -123,6 +123,7 @@ def on_watchlist(user_id):
 
     for key, value in watchlist.items():
         on_watchlist.append(key)
+        print(value)
     return on_watchlist
 
 
@@ -147,9 +148,7 @@ def search_movie():
             movie_id = int(item)
             for key in api_results:
                 if key["movie_id"] == movie_id:
-                    print("I have actiivated")
                     key["on_watchlist"] = True
-        print(api_results)
         return render_template("search.html")
     except Exception as e:
         # Give some sort of error that that actor name does not exist
