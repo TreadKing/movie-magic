@@ -94,7 +94,7 @@ def login_callback():
         if auth_token:
             output = {"auth_token": auth_token, "username": username}
 
-            users_ref = db.reference("/").child("Users").child(str(user_id))
+            users_ref = db.reference("/").child("users").child(str(user_id))
 
             if not users_ref.get():
                 print(f"new user: {user_id}")
@@ -118,7 +118,7 @@ def home():
 
 def on_watchlist(user_id):
     on_watchlist = []
-    ref = db.reference("Users").child(user_id).child("WatchList")
+    ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
 
     for key, value in watchlist.items():
@@ -185,11 +185,24 @@ def getList():
         )
 
     watch_list_ref = (
-        db.reference("/").child("Users").child(str(user_id)).child("WatchList")
+        db.reference("/").child("users").child(str(user_id)).child("watch_list")
     )
     watch_list = watch_list_ref.get()
 
-    return make_response(jsonify(watch_list)), 200
+    watch_list_output = []
+
+    for key in watch_list:
+        watch_list_item = {
+            "movie_id": key,
+            "movie_title": watch_list[key]["movie_title"],
+            "movie_image": watch_list[key]["movie_image"],
+            "rating": watch_list[key]["rating"],
+            "status": watch_list[key]["status"],
+            "comment": None
+        }
+        watch_list_output.append(watch_list_item)
+
+    return make_response(jsonify(watch_list_output)), 200
 
 
 @app.route("/addToWatchlist", methods=["POST"])
@@ -197,8 +210,10 @@ def addToList(movie_id):
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     """
     auth_token
-    staus (unwatched, watching, dropped, finished)
-    movieID
+    movie_id
+    movie_title
+    movie_image
+    rating
     """
 
     auth_token = request.args["auth_token"]
@@ -208,17 +223,27 @@ def addToList(movie_id):
             jsonify({"error": "Invalid token. Please log in again."}), 500
         )
 
-    status = request.args["Status"]
-    movie_id = request.args["MovieID"]
+    # status = request.args["Status"]
+    movie_id = request.args["movie_id"]
+    movie_title = request.args["movie_title"]
+    movie_image = request.args["movie_image"]
+    rating = request.args["rating"]
+
 
     movie_id_ref = (
         db.reference("/")
-        .child("Users")
+        .child("users")
         .child(str(user_id))
-        .child("WatchList")
+        .child("watch_list")
         .child(str(movie_id))
     )
-    movie_id_ref.set({"Status": status})
+
+    movie_id_ref.set({
+        "status": 'unwatched',
+        "movie_title": movie_title,
+        "movie_image": movie_image,
+        "rating": rating
+    })
 
     # Send user to view their own watchlist
     return make_response(jsonify({"message": "add successful"})), 200
@@ -237,7 +262,7 @@ def deleteFromList():
 
     movie_id = request.args["MovieID"]
     movie_id_ref = (
-        db.reference("Users").child(user_id).child("WatchList").child(movie_id)
+        db.reference("users").child(user_id).child("watch_list").child(movie_id)
     )
     movie_id_ref.set({})
 
@@ -252,7 +277,7 @@ def addFriend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
     # Needs to receive a user id and a friend id
     user_id = ""
-    ref = db.reference("Users").child(user_id).child("FriendList")
+    ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
     # Insert friend id to friends list
@@ -269,7 +294,7 @@ def deleteFriend():
             500,
         )
 
-    ref = db.reference("Users").child(user_id).child("FriendList")
+    ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
     for key, value in friendlist.items():
@@ -279,11 +304,11 @@ def deleteFriend():
     return make_response(jsonify({"message": "delete sucessful"})), 200
 
 
-@app.route("/getUsers", methods=["POST"])
-def getUsers():
+@app.route("/getusers", methods=["POST"])
+def getusers():
     """Query all users from db and output the list for users to view"""
     names_list = []
-    ref = db.reference("Users")
+    ref = db.reference("users")
     names = ref.get()
     for key, value in names.items():
         names_list.append(value["Name"])
