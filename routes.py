@@ -23,7 +23,7 @@ from firebase_admin import db
 
 from get_movie import search
 
-
+bp = flask.Blueprint("bp", __name__, template_folder="./build")
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
@@ -103,18 +103,20 @@ def login_callback():
             else:
                 print(f"user {user_id} already exists")
 
-            # return make_response(jsonify(output), 200)
-            return render_template("search.html")
+            return make_response(jsonify(output)), 200
+            # return render_template("search.html")
 
     else:
-        return make_response("User email not available or not verified by Google.", 400)
+        return make_response("User email not available or not verified by Google."), 200
 
 
 @app.route("/")
 def home():
-    # If user is already logged in, skip this step
-    return render_template("login.html")
+    return redirect(flask.url_for("bp.index"))
 
+@bp.route("/index")
+def index():
+    return flask.render_template("index.html")
 
 def on_watchlist(user_id):
     on_watchlist = []
@@ -322,6 +324,9 @@ def getusers():
     # return names_list
     return render_template("users.html")
 
+app.register_blueprint(bp)
 
 if __name__ == "__main__":
-    app.run(debug=True, ssl_context="adhoc")
+    app.run(
+        debug=True, ssl_context="adhoc"
+    )
