@@ -21,17 +21,4 @@ cred_obj = firebase_admin.credentials.Certificate({
 default_app = firebase_admin.initialize_app(cred_obj, {"databaseURL": "https://movie-magic-db-default-rtdb.firebaseio.com"})
 
 
-# app = flask.Flask(__name__, static_folder="./build/static")
-app = flask.Flask(__name__)
-# Point SQLAlchemy to your Heroku database
-# db_url = os.getenv("DATABASE_URL")
-# if db_url.startswith("postgres://"):
-#     db_url = db_url.replace("postgres://", "postgresql://", 1)
-# app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-# # Gets rid of a warning
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.secret_key = b"I am a secret key!"  # don't defraud my app ok?
-
-# # from flask_login import UserMixin
-
-# db = SQLAlchemy(app)
+app = flask.Flask(__name__, static_folder="./build/static")
