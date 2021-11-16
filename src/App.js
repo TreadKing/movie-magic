@@ -3,7 +3,7 @@ import MovieSearch from './components/MovieSearch.js';
 
 function App() {
   return (
-    <MovieSearch />
+    <Login />
   );
 }
 
