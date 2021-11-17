@@ -103,8 +103,10 @@ def login_callback():
 
             else:
                 print(f"user {user_id} already exists")
-            
-            return redirect(flask.url_for("bp.index", auth_token=auth_token, username=username))
+
+            return redirect(
+                flask.url_for("bp.index", auth_token=auth_token, username=username)
+            )
             # return make_response(jsonify(output)), 200
 
             return make_response(jsonify(output)), 200
@@ -118,6 +120,7 @@ def login_callback():
 def home():
     return render_template("login.html")
 
+
 @bp.route("/index")
 def index():
     # data = {
@@ -129,14 +132,15 @@ def index():
     resp.set_cookie("auth_token", request.args["auth_token"])
     return resp
 
+
 def on_watchlist(user_id):
     on_watchlist = []
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
-
-    for key, value in watchlist.items():
-        on_watchlist.append(key)
-        print(value)
+    if watchlist != None:
+        for key, value in watchlist.items():
+            on_watchlist.append(key)
+            print(value)
     return on_watchlist
 
 
@@ -148,9 +152,9 @@ def search_movie():
     so that the Frontend JS knows what movies from the API search can not be added to the user's watchlist."""
     # I tested by putting a movie id 671 under by Name in the db. By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    print('aaaa')
+    print("aaaa")
     print(request.json)
-    print('ASDASAAAA')
+    print("ASDASAAAA")
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -163,6 +167,7 @@ def search_movie():
     try:
         # films_on_watchlist = on_watchlist("116405330661820156295")
         films_on_watchlist = on_watchlist(user_id)
+
         api_results = search(user_input)
         films_from_search = []
         for item in api_results:
@@ -174,7 +179,6 @@ def search_movie():
             for key in api_results:
                 if key["movie_id"] == movie_id:
                     key["on_watchlist"] = True
-
         return make_response(jsonify(api_results)), 200
 
     except Exception as e:
@@ -213,7 +217,7 @@ def getList():
                 "movie_image": watch_list[key]["movie_image"],
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
-                "comment": None
+                "comment": None,
             }
             watch_list_output.append(watch_list_item)
 
@@ -247,7 +251,6 @@ def addToList():
     movie_image = request.json["movie_image"]
     rating = request.json["rating"]
 
-
     movie_id_ref = (
         db.reference("/")
         .child("users")
@@ -257,16 +260,18 @@ def addToList():
     )
 
     if not movie_id_ref.get():
-        movie_id_ref.set({
-            "status": 'unwatched',
-            "movie_title": movie_title,
-            "movie_image": movie_image,
-            "rating": rating
-        })
+        movie_id_ref.set(
+            {
+                "status": "unwatched",
+                "movie_title": movie_title,
+                "movie_image": movie_image,
+                "rating": rating,
+            }
+        )
 
         # Send user to view their own watchlist
         return make_response(jsonify({"message": "add successful"})), 200
-     
+
     else:
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
@@ -274,14 +279,14 @@ def addToList():
 @app.route("/deleteFromWatchList", methods=["POST"])
 def deleteFromList():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    print('aaa')
+    print("aaa")
     print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500
+            500,
         )
 
     movie_id = request.json["movie_id"]
@@ -340,14 +345,16 @@ def getusers():
     # return names_list
     return render_template("users.html")
 
+
 app.register_blueprint(bp)
 
 if __name__ == "__main__":
     if os.getenv("port"):
         app.run(
-            host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True, ssl_context="adhoc"
+            host=os.getenv("IP", "0.0.0.0"),
+            port=int(os.getenv("PORT", 8080)),
+            debug=True,
+            ssl_context="adhoc",
         )
     else:
-        app.run(
-            debug=True, ssl_context="adhoc"
-        )
+        app.run(debug=True, ssl_context="adhoc")
