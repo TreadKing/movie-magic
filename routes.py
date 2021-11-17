@@ -272,6 +272,8 @@ def addToList():
 @app.route("/deleteFromWatchList", methods=["POST"])
 def deleteFromList():
     """Find a movie object in the db and delete that entry from the watchlist"""
+    print('aaa')
+    print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
