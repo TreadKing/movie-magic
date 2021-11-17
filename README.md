@@ -7,13 +7,13 @@ A web app for maintaining and sharing movie watchlists. Users can search movies 
 ### Installation and Use
 1. Install the required files via running -pip install requirements.txt
 2. Create a .env file containing the following information:
-    a. MOVIEDB_KEY
-        Can be obtained by creating an account from [TheMovieDB](https://www.themoviedb.org/) and navigate to API under profile settings. 
-    b. FIREBASE_PROJECT_ID
-    c. FIREBASE_PRIVATE_KEY
-    d. FIREBASE_CLIENT_EMAIL
-    e. DATABASE_URL
-        Can be obtained by creating an account and project at [Firebase](https://firebase.google.com/)
-    f. GOOGLE_CLIENT_ID
-    g. GOOGLE_CLIENT_SECRET
-        Can be obtained by creating a Google Account and creating a Google API Project. Documentation can be found [here](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid)
+    1. MOVIEDB_KEY
+        - Can be obtained by creating an account from [TheMovieDB](https://www.themoviedb.org/) and navigate to API under profile settings. 
+    2. FIREBASE_PROJECT_ID
+    3. FIREBASE_PRIVATE_KEY
+    4. FIREBASE_CLIENT_EMAIL
+    5. DATABASE_URL
+        - Can be obtained by creating an account and project at [Firebase](https://firebase.google.com/)
+    6. GOOGLE_CLIENT_ID
+    7. GOOGLE_CLIENT_SECRET
+        - Can be obtained by creating a Google Account and creating a Google API Project. Documentation can be found [here](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid)
