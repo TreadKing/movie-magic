@@ -19,9 +19,9 @@ def search(query):
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
     r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
     r = r.json()
-    if r["total_results"] != 0:
-        for i in range(len(r)):
 
+    if r["total_results"] != 0:
+        for i in range(len(r["results"])):
             film = {
                 "movie_id": r["results"][i]["id"],
                 "movie_title": r["results"][i]["original_title"],
@@ -30,6 +30,7 @@ def search(query):
                 "on_watchlist": False,
             }
             film_list.append(film)
+
     # Tests if the query is a person and appends known for movies to the film list
     r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
     r = r.json()
@@ -47,6 +48,7 @@ def search(query):
                     "on_watchlist": False,
                 }
                 film_list.append(film)
+
     return film_list
 
 
