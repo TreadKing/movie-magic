@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import MovieSearch from './MovieSearch.js';
 import Movie from './Movie.js';
 
 
 
-function MovieSearch() {
-
+function Watchlist(props) {
 
     const [watchlist, setWatchlist] = useState([])
+    const [switchToSearch, setSwitchToSearch] = useState(false)
+    const authToken = props.authToken
 
-    useEffect(getMovies)
+    useEffect(getWatchlist, [])
 
     function getWatchlist() {
 
@@ -22,16 +24,15 @@ function MovieSearch() {
             })
         }
 
-        fetch('/getWatchlist', options)
+        fetch('/getWatchList', options)
             .then(response => response.json())
-            .then(searchResult => setWatchlistMovies(searchResult))
+            .then(searchResult => setWatchlist(searchResult))
     }
 
     function displayMovies() {
         const display = []
-        const movie
-        for (var i = 0; i < watchlistMovies.length; i++) {
-            movie = watchlistMovies[i]
+        for (var i = 0; i < watchlist.length; i++) {
+            var movie = watchlist[i]
             display.push(<Movie
                 movieId={movie['movie_id']}
                 movieTitle={movie['movie_title']}
@@ -41,15 +42,23 @@ function MovieSearch() {
                 status={movie['status']}
                 comment={movie['comment']}
                 key={i}
+                onWatchlist={true}
+                authToken={authToken}
             />
             )
         }
         return <div className="watchlist-display">{display}</div>
     }
 
-    return <>
+    if (switchToSearch) {
+        return <MovieSearch authToken={authToken}></MovieSearch>
+    } else {
+        return <>
+        <button onClick={() => setSwitchToSearch(true)}>Search</button>
         {displayMovies()}
     </>
+    }
+
 }
 
-export default MovieSearch;
+export default Watchlist;

@@ -20,7 +20,10 @@ function Movie(props) {
             body: JSON.stringify({
                 'auth_token': authToken,
                 'status': 'unwatched',
-                'movid_id': movieId,
+                'movie_id': movieId,
+                'movie_title': movieTitle,
+                'movie_image': movieImage,
+                'rating': rating,
             })
         }
 
