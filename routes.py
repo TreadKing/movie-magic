@@ -23,7 +23,7 @@ from firebase_admin import db
 
 from get_movie import search
 
-
+bp = flask.Blueprint("bp", __name__, template_folder="./build")
 # Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
@@ -49,6 +49,7 @@ def login():
         scope=["openid", "email", "profile"],
     )
 
+    print(request_uri)
     return redirect(request_uri)
 
 
@@ -102,19 +103,29 @@ def login_callback():
 
             else:
                 print(f"user {user_id} already exists")
-
-            # return make_response(jsonify(output), 200)
-            return render_template("search.html")
+            
+            return redirect(flask.url_for("bp.index", auth_token=auth_token, username=username))
+            # return make_response(jsonify(output)), 200
+            # return render_template("search.html")
 
     else:
-        return make_response("User email not available or not verified by Google.", 400)
+        return make_response("User email not available or not verified by Google."), 200
 
 
 @app.route("/")
 def home():
-    # If user is already logged in, skip this step
     return render_template("login.html")
 
+@bp.route("/index")
+def index():
+    # data = {
+    #     "auth_token": request.args["auth_token"],
+    #     "username": request.args["username"]
+    # }
+    # print(data)
+    resp = make_response(render_template("index.html"))
+    resp.set_cookie("auth_token", request.args["auth_token"])
+    return resp
 
 def on_watchlist(user_id):
     on_watchlist = []
@@ -135,8 +146,10 @@ def search_movie():
     so that the Frontend JS knows what movies from the API search can not be added to the user's watchlist."""
     # I tested by putting a movie id 671 under by Name in the db. By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    
-    auth_token = request.args["auth_token"]
+    print('aaaa')
+    print(request.json)
+    print('ASDASAAAA')
+    auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return make_response(
@@ -144,7 +157,7 @@ def search_movie():
         )
 
     # user_input = flask.request.form.get("user_input")
-    user_input = request.args["search_key"]
+    user_input = request.json["search_key"]
     try:
         # films_on_watchlist = on_watchlist("116405330661820156295")
         films_on_watchlist = on_watchlist(user_id)
@@ -169,12 +182,12 @@ def search_movie():
         return make_response(jsonify({"message": str(e)})), 500
 
 
-@app.route("/getWatchlist", methods=["POST"])
+@app.route("/getWatchList", methods=["POST"])
 def getList():
     """Gets information from db to output to the user their watchlist"""
     # Query information from db pertaining to user
 
-    auth_token = request.args["auth_token"]
+    auth_token = request.json["auth_token"]
 
     user_id = decode_auth_token(auth_token)
 
@@ -208,7 +221,7 @@ def getList():
     return make_response(jsonify(watch_list_output)), 200
 
 
-@app.route("/addToWatchlist", methods=["POST"])
+@app.route("/addToWatchList", methods=["POST"])
 def addToList():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     """
@@ -219,18 +232,18 @@ def addToList():
     rating
     """
 
-    auth_token = request.args["auth_token"]
+    auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return make_response(
             jsonify({"error": "Invalid token. Please log in again."}), 500
         )
 
-    # status = request.args["Status"]
-    movie_id = request.args["movie_id"]
-    movie_title = request.args["movie_title"]
-    movie_image = request.args["movie_image"]
-    rating = request.args["rating"]
+    # status = request.json["Status"]
+    movie_id = request.json["movie_id"]
+    movie_title = request.json["movie_title"]
+    movie_image = request.json["movie_image"]
+    rating = request.json["rating"]
 
 
     movie_id_ref = (
@@ -256,10 +269,10 @@ def addToList():
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
-@app.route("/deleteFromWatchlist", methods=["POST"])
+@app.route("/deleteFromWatchList", methods=["POST"])
 def deleteFromList():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    auth_token = request.args["auth_token"]
+    auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return (
@@ -267,9 +280,10 @@ def deleteFromList():
             500
         )
 
-    movie_id = request.args["movie_id"]
+    movie_id = request.json["movie_id"]
+    print(movie_id)
     movie_id_ref = (
-        db.reference("users").child(user_id).child("watch_list").child(movie_id)
+        db.reference("users").child(user_id).child("watch_list").child(str(movie_id))
     )
     movie_id_ref.set({})
 
@@ -293,7 +307,7 @@ def addFriend(friend_id):
 @app.route("/deleteFromFriendsList", methods=["POST"])
 def deleteFriend():
     """Given a friend id, delete that id from a user's friendlist"""
-    auth_token = request.args["auth_token"]
+    auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return (
@@ -322,6 +336,9 @@ def getusers():
     # return names_list
     return render_template("users.html")
 
+app.register_blueprint(bp)
 
 if __name__ == "__main__":
-    app.run(debug=True, ssl_context="adhoc")
+    app.run(
+        debug=True, ssl_context="adhoc"
+    )

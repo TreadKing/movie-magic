@@ -5,6 +5,7 @@ import Movie from './Movie.js';
 function MovieSearch(props) {
 
     const authToken = props.authToken
+    const username = props.username
 
     const [searchKey, setSearchKey] = useState('')
     const [searchResults, setSearchResults] = useState([])

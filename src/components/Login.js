@@ -3,7 +3,7 @@ import MovieSearch from './MovieSearch.js';
 
 function Login() {
 
-    const switchToSearch = useState(false)
+    const [switchToSearch, setSwitchToSearch] = useState(false)
 
     function doLogin() {
         const options = {
@@ -11,7 +11,7 @@ function Login() {
             headers: { 'Content-Type': 'application/json' },
         }
 
-        fetch('/api/login', options).then(() => switchToSearch(true))
+        fetch('/api/login', options).then(() => setSwitchToSearch(true))
     }
 
     if (switchToSearch) {
