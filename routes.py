@@ -106,6 +106,8 @@ def login_callback():
             
             return redirect(flask.url_for("bp.index", auth_token=auth_token, username=username))
             # return make_response(jsonify(output)), 200
+
+            return make_response(jsonify(output)), 200
             # return render_template("search.html")
 
     else:
