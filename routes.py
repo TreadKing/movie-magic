@@ -5,15 +5,17 @@ includes routes
 
 import os
 import json
-import random
+
+# import random
 from flask.templating import render_template
 
 import requests
 import flask
-from flask import request, url_for, redirect, make_response
+from flask import request, redirect, make_response
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
-from requests import api
+
+# from requests import api
 
 from app import app
 
@@ -34,11 +36,13 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 
 def get_google_provider_cfg():
+    """Gets google provider configuration"""
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
 
 @app.route("/api/login", methods=["POST"])
 def login():
+    """Handles user login"""
 
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -55,6 +59,7 @@ def login():
 
 @app.route("/api/login/callback")
 def login_callback():
+    """Handles login callback"""
     # get code from google
     code = request.args.get("code")
 
@@ -93,7 +98,7 @@ def login_callback():
         auth_token = encode_auth_token(str(user_id))
 
         if auth_token:
-            output = {"auth_token": auth_token, "username": username}
+            # output = {"auth_token": auth_token, "username": username}
 
             users_ref = db.reference("/").child("users").child(str(user_id))
 
@@ -103,11 +108,12 @@ def login_callback():
 
             else:
                 print(f"user {user_id} already exists")
-            
-            return redirect(flask.url_for("bp.index", auth_token=auth_token, username=username))
+            return redirect(
+                flask.url_for("bp.index", auth_token=auth_token, username=username)
+            )
             # return make_response(jsonify(output)), 200
 
-            return make_response(jsonify(output)), 200
+            # return make_response(jsonify(output)), 200
             # return render_template("search.html")
 
     else:
@@ -116,10 +122,13 @@ def login_callback():
 
 @app.route("/")
 def home():
+    """Render login page"""
     return render_template("login.html")
+
 
 @bp.route("/index")
 def index():
+    """Render index page"""
     # data = {
     #     "auth_token": request.args["auth_token"],
     #     "username": request.args["username"]
@@ -129,28 +138,35 @@ def index():
     resp.set_cookie("auth_token", request.args["auth_token"])
     return resp
 
+
 def on_watchlist(user_id):
-    on_watchlist = []
+    """Gets user watchlist"""
+    user_watchlist = []
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
 
     for key, value in watchlist.items():
-        on_watchlist.append(key)
+        user_watchlist.append(key)
         print(value)
-    return on_watchlist
+    return user_watchlist
 
 
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
-    """The function gets all the movie ids from a user's watchlist and all the movie ids from the API call.
-    Then a list intersection is performed to determine what movie ids already appear in the watchlist.
-    For each value in the list intersection, the value of 'on_watchlist' in the API results is changed to True
-    so that the Frontend JS knows what movies from the API search can not be added to the user's watchlist."""
-    # I tested by putting a movie id 671 under by Name in the db. By searching for 'Alan Rickman', the movie
+    """The function gets all the movie ids from a user's watchlist
+    and all the movie ids from the API call.
+    Then a list intersection is performed to determine what movie
+    ids already appear in the watchlist.
+    For each value in the list intersection, the value of 'on_watchlist'
+    in the API results is changed to True
+    so that the Frontend JS knows what movies from the API search can not
+    be added to the user's watchlist."""
+    # I tested by putting a movie id 671 under by Name in the db.
+    # By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    print('aaaa')
+    print("aaaa")
     print(request.json)
-    print('ASDASAAAA')
+    print("ASDASAAAA")
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -185,7 +201,7 @@ def search_movie():
 
 
 @app.route("/getWatchList", methods=["POST"])
-def getList():
+def get_list():
     """Gets information from db to output to the user their watchlist"""
     # Query information from db pertaining to user
 
@@ -213,7 +229,7 @@ def getList():
                 "movie_image": watch_list[key]["movie_image"],
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
-                "comment": None
+                "comment": None,
             }
             watch_list_output.append(watch_list_item)
 
@@ -224,7 +240,7 @@ def getList():
 
 
 @app.route("/addToWatchList", methods=["POST"])
-def addToList():
+def add_to_list():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
     """
     auth_token
@@ -247,7 +263,6 @@ def addToList():
     movie_image = request.json["movie_image"]
     rating = request.json["rating"]
 
-
     movie_id_ref = (
         db.reference("/")
         .child("users")
@@ -257,31 +272,33 @@ def addToList():
     )
 
     if not movie_id_ref.get():
-        movie_id_ref.set({
-            "status": 'unwatched',
-            "movie_title": movie_title,
-            "movie_image": movie_image,
-            "rating": rating
-        })
+        movie_id_ref.set(
+            {
+                "status": "unwatched",
+                "movie_title": movie_title,
+                "movie_image": movie_image,
+                "rating": rating,
+            }
+        )
 
         # Send user to view their own watchlist
         return make_response(jsonify({"message": "add successful"})), 200
-     
+
     else:
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
 @app.route("/deleteFromWatchList", methods=["POST"])
-def deleteFromList():
+def delete_from_list():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    print('aaa')
+    print("aaa")
     print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
         return (
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500
+            500,
         )
 
     movie_id = request.json["movie_id"]
@@ -298,7 +315,7 @@ def deleteFromList():
 
 
 @app.route("/addToFriendslist", methods=["POST"])
-def addFriend(friend_id):
+def add_friend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
     # Needs to receive a user id and a friend id
     user_id = ""
@@ -309,7 +326,7 @@ def addFriend(friend_id):
 
 
 @app.route("/deleteFromFriendsList", methods=["POST"])
-def deleteFriend():
+def delete_friend():
     """Given a friend id, delete that id from a user's friendlist"""
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
@@ -335,14 +352,18 @@ def getusers():
     names_list = []
     ref = db.reference("users")
     names = ref.get()
-    for key, value in names.items():
+    for value in names.items():
         names_list.append(value["Name"])
     # return names_list
     return render_template("users.html")
+
 
 app.register_blueprint(bp)
 
 if __name__ == "__main__":
     app.run(
-        host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True, ssl_context="adhoc"
+        host=os.getenv("IP", "0.0.0.0"),
+        port=int(os.getenv("PORT", 8080)),
+        debug=True,
+        ssl_context="adhoc",
     )
