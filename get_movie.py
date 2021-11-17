@@ -87,7 +87,7 @@ def get_similar(movie_id):
     """Gets a list of similar films to the movie specified by the movie id"""
     similar_films = []
     params = {"movie_id": movie_id, "api_key": MOVIEDB_KEY}
-    r = requests.get("https://appi.themoviedb.org/3/movie/" + params)
+    r = requests.get("https://api.themoviedb.org/3/movie/" + params)
     r = r.json()
     for i in range(len(r["results"])):
         film = {
