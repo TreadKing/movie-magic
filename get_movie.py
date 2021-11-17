@@ -1,7 +1,9 @@
-import requests
-import os
+"""This file contains api functions that are utilized throughout the app"""
 import json
+import os
 import operator
+import requests
+
 from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
