@@ -108,6 +108,7 @@ def login_callback():
 
             else:
                 print(f"user {user_id} already exists")
+
             return redirect(
                 flask.url_for("bp.index", auth_token=auth_token, username=username)
             )
@@ -144,7 +145,7 @@ def on_watchlist(user_id):
     user_watchlist = []
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
-
+    
     for key, value in watchlist.items():
         user_watchlist.append(key)
         print(value)
@@ -179,6 +180,7 @@ def search_movie():
     try:
         # films_on_watchlist = on_watchlist("116405330661820156295")
         films_on_watchlist = on_watchlist(user_id)
+
         api_results = search(user_input)
         films_from_search = []
         for item in api_results:
@@ -190,7 +192,6 @@ def search_movie():
             for key in api_results:
                 if key["movie_id"] == movie_id:
                     key["on_watchlist"] = True
-
         return make_response(jsonify(api_results)), 200
 
     except Exception as e:
@@ -361,9 +362,13 @@ def getusers():
 app.register_blueprint(bp)
 
 if __name__ == "__main__":
-    app.run(
-        host=os.getenv("IP", "0.0.0.0"),
-        port=int(os.getenv("PORT", 8080)),
-        debug=True,
-        ssl_context="adhoc",
-    )
+    if os.getenv("port"):
+        app.run(
+            host=os.getenv("IP", "0.0.0.0"),
+            port=int(os.getenv("PORT", 8080)),
+            debug=True,
+            ssl_context="adhoc",
+        )
+    else:
+        app.run(debug=True, ssl_context="adhoc")
+
