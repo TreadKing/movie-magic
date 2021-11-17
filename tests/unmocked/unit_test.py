@@ -2,7 +2,9 @@ import unittest
 from flask import url_for, request
 from werkzeug.utils import redirect
 from routes import get_google_provider_cfg, client
-from get_movie import search
+from get_movie import get_movie_details, get_similar, get_upcoming, search
+import json
+from models import User
 
 
 class TestStringMethods(unittest.TestCase):
@@ -36,9 +38,41 @@ class TestStringMethods(unittest.TestCase):
         self.assertRaises(Exception, search)
         self.assertIsNone(movie_text)
 
-        user_input = "Rush Hour 3"
+        user_input = "Rush Hour"
         movie_text = search(user_input)
-        self.assertIn("Rush Hour 3", movie_text)
+        self.assertIn("Rush Hour", movie_text)
+
+    def test_search(self):
+        user_input = "Rush Hour"
+        result = search(user_input)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+
+    def test_get_movie_details(self):
+        user_input = "Rush Hour"
+        api_results = get_movie_details(user_input)
+        self.assertIsNotNone(api_results)
+        self.assertIn("Comedy", api_results)
+
+    def test_get_upcoming(self):
+        api_results = get_upcoming()
+        self.assertIsNotNone(api_results)
+        api_results = json.loads(api_results)
+        self.assertNotIn("ValueError", api_results)
+
+    def test_get_similar(self):
+        api_results = get_similar("2109")
+        self.assertIsNotNone(api_results)
+        api_results = json.loads(api_results)
+        self.assertNotIn("ValueError", api_results)
+
+    def test_user(self):
+        new_user = User()
+        new_user.user_id = "00000"
+        new_user.username = "jack"
+        result = new_user.get_username
+        self.assertIsNotNone(result)
+        self.assertIn("jack", result)
 
 
 if __name__ == "__main__":
