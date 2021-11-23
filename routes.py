@@ -11,7 +11,7 @@ from flask.templating import render_template
 
 import requests
 import flask
-from flask import request, redirect, make_response
+from flask import request, redirect, make_response, url_for
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
@@ -123,8 +123,8 @@ def login_callback():
 
 @app.route("/")
 def home():
-    """Render login page"""
-    return render_template("login.html")
+    """Render landing page"""
+    return render_template("index.html")
 
 
 @bp.route("/index")
@@ -145,7 +145,7 @@ def on_watchlist(user_id):
     user_watchlist = []
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
-    
+
     for key, value in watchlist.items():
         user_watchlist.append(key)
         print(value)
@@ -371,4 +371,3 @@ if __name__ == "__main__":
         )
     else:
         app.run(debug=True, ssl_context="adhoc")
-
