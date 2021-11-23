@@ -49,6 +49,7 @@ def search(query):
                     "movie_title": r["results"][0]["known_for"][i]["original_title"],
                     "movie_image": POSTER_URL
                     + r["results"][0]["known_for"][i]["poster_path"],
+                    "genres": get_genres(r["results"][0]["known_for"][i]["id"]),
                     "release_date": r["results"][0]["known_for"][i]["release_date"],
                     "rating": r["results"][0]["known_for"][i]["vote_average"],
                     "on_watchlist": False,
@@ -85,30 +86,37 @@ def get_upcoming():
         release_date = datetime.strptime(movie_date, "%Y-%m-%d").date()
         if release_date > date_today:
             film = {
+                "movie_id": r["results"][i]["id"],
                 "movie_title": r["results"][i]["original_title"],
-                "release_date": r["results"][i]["release_date"],
                 "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+                "genres": get_genres(r["results"][i]["id"]),
+                "release_date": r["results"][i]["release_date"],
+                "on_watchlist": False,
             }
             movie_list.append(film)
     movie_list = sorted(movie_list, key=operator.itemgetter("release_date"))
-    print(movie_list)
     return json.dumps(movie_list)
 
 
-get_upcoming()
-
-
-def get_similar(movie_id):
+def get_similar(movie_lists):
     """Gets a list of similar films to the movie specified by the movie id"""
+
     similar_films = []
-    params = {"movie_id": movie_id, "api_key": MOVIEDB_KEY}
-    r = requests.get("https://api.themoviedb.org/3/movie/" + params)
-    r = r.json()
-    for i in range(len(r["results"])):
-        film = {
-            "movie_title": r["results"][i]["title"],
-            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
-            "rating": r["results"][0]["known_for"][i]["vote_average"],
-        }
-        similar_films.append(film)
+    params = {"api_key": MOVIEDB_KEY}
+    for movie_id in movie_lists:
+        r = requests.get(
+            "https://api.themoviedb.org/3/movie/" + str(movie_id) + "/similar", params
+        )
+        r = r.json()
+        for i in range(len(r["results"])):
+            film = {
+                "movie_id": r["results"][i]["id"],
+                "movie_title": r["results"][i]["title"],
+                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+                "rating": r["results"][i]["vote_average"],
+                "genres": get_genres(r["results"][i]["id"]),
+                "release_date": r["results"][i]["release_date"],
+                "on_watchlist": False,
+            }
+            similar_films.append(film)
     return json.dumps(similar_films)
