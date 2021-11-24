@@ -22,6 +22,7 @@ from app import app
 # from models import User
 from auth_token import encode_auth_token, decode_auth_token
 from firebase_admin import db
+from firebase_admin import auth
 
 from get_movie import search
 
@@ -38,6 +39,30 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 def get_google_provider_cfg():
     """Gets google provider configuration"""
     return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+@app.route("/login", methods=["POST"])
+def new_login():
+    """Handles user login"""
+    try: 
+        id_token = request.json["access_token"]
+        decoded_token = auth.verify_id_token(id_token)
+        user_id = decoded_token['uid']
+        username = decoded_token["displayName"]
+
+        users_ref = db.reference("/").child("users").child(str(user_id))
+
+        if not users_ref.get():
+            print(f"new user: {user_id}")
+            users_ref.set({"name": username})
+
+        else:
+            print(f"user {user_id} already exists")
+
+    except:
+        print('nope')
+        return 'nope'
+
+    return 'hi'
 
 
 @app.route("/api/login", methods=["POST"])
@@ -165,9 +190,7 @@ def search_movie():
     # I tested by putting a movie id 671 under by Name in the db.
     # By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    print("aaaa")
-    print(request.json)
-    print("ASDASAAAA")
+
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -370,5 +393,5 @@ if __name__ == "__main__":
             ssl_context="adhoc",
         )
     else:
-        app.run(debug=True, ssl_context="adhoc")
+        app.run(debug=True)
 
