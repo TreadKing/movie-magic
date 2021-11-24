@@ -6,7 +6,7 @@ includes routes
 import os
 import json
 
-# import random
+import random
 from flask.templating import render_template
 
 import requests
@@ -23,7 +23,7 @@ from app import app
 from auth_token import encode_auth_token, decode_auth_token
 from firebase_admin import db
 
-from get_movie import search
+from get_movie import search, get_upcoming, get_genres, get_similar
 
 bp = flask.Blueprint("bp", __name__, template_folder="./build")
 # Configuration
@@ -104,7 +104,7 @@ def login_callback():
 
             if not users_ref.get():
                 print(f"new user: {user_id}")
-                users_ref.set({"Name": username})
+                users_ref.set({"name": username})
 
             else:
                 print(f"user {user_id} already exists")
@@ -145,11 +145,27 @@ def on_watchlist(user_id):
     user_watchlist = []
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
-    
+
     for key, value in watchlist.items():
         user_watchlist.append(key)
         print(value)
     return user_watchlist
+
+
+def filter_watchlist(user_id, results):
+    films_on_watchlist = on_watchlist(user_id)
+
+    films_from_results = []
+    for item in results:
+        films_from_results.append(str(item["movie_id"]))
+    already_added = list(set(films_from_results) & set(films_on_watchlist))
+
+    for item in already_added:
+        movie_id = int(item)
+        for key in results:
+            if key["movie_id"] == movie_id:
+                key["on_watchlist"] = True
+    return results
 
 
 @app.route("/search", methods=["POST", "GET"])
@@ -178,25 +194,29 @@ def search_movie():
     # user_input = flask.request.form.get("user_input")
     user_input = request.json["search_key"]
     try:
-        # films_on_watchlist = on_watchlist("116405330661820156295")
-        films_on_watchlist = on_watchlist(user_id)
+        api_results = filter_watchlist(user_id, search(user_input))
 
-        api_results = search(user_input)
-        films_from_search = []
-        for item in api_results:
-            films_from_search.append(str(item["movie_id"]))
-        already_added = list(set(films_from_search) & set(films_on_watchlist))
-
-        for item in already_added:
-            movie_id = int(item)
-            for key in api_results:
-                if key["movie_id"] == movie_id:
-                    key["on_watchlist"] = True
         return make_response(jsonify(api_results)), 200
 
     except Exception as e:
         # Give some sort of error that that actor name does not exist
         # return None
+        print(e)
+        return make_response(jsonify({"message": str(e)})), 500
+
+
+@app.route("/getUpcoming", methods=["POST"])
+def upcoming():
+    auth_token = request.json["auth_token"]
+    user_id = decode_auth_token(auth_token)
+    if user_id == "Invalid token. Please log in again.":
+        return make_response(
+            jsonify({"error": "Invalid token. Please log in again."}), 500
+        )
+    try:
+        upcoming_results = filter_watchlist(user_id, get_upcoming())
+        return make_response(jsonify(upcoming_results)), 200
+    except Exception as e:
         print(e)
         return make_response(jsonify({"message": str(e)})), 500
 
@@ -222,6 +242,7 @@ def get_list():
     watch_list = watch_list_ref.get()
 
     try:
+
         watch_list_output = []
         for key in watch_list:
             watch_list_item = {
@@ -233,9 +254,14 @@ def get_list():
                 "comment": None,
             }
             watch_list_output.append(watch_list_item)
+        # Get random movie ids to get suggestions for
+        random_index = random.randint(0, len(watch_list_output) - 1)
+        random_id = watch_list_output[random_index]["movie_id"]
+        movie_suggestions = get_similar(random_id)
 
-    except:
+    except Exception as e:
         watch_list_output = []
+        print(e)
 
     return make_response(jsonify(watch_list_output)), 200
 
@@ -353,10 +379,9 @@ def getusers():
     names_list = []
     ref = db.reference("users")
     names = ref.get()
-    for value in names.items():
-        names_list.append(value["Name"])
-    # return names_list
-    return render_template("users.html")
+    for i in names.items():
+        names_list.append(i[1]["name"])
+    return names_list
 
 
 app.register_blueprint(bp)
@@ -371,4 +396,3 @@ if __name__ == "__main__":
         )
     else:
         app.run(debug=True, ssl_context="adhoc")
-

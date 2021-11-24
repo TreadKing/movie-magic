@@ -65,7 +65,9 @@ def get_genres(movie_id):
 
     genre_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US"}
-    r = requests.get("https://api.themoviedb.org/3/movie/" + movie_id, params=params)
+    r = requests.get(
+        "https://api.themoviedb.org/3/movie/" + str(movie_id), params=params
+    )
     r = r.json()
 
     for i in range(len(r["genres"])):
@@ -98,25 +100,25 @@ def get_upcoming():
     return json.dumps(movie_list)
 
 
-def get_similar(movie_lists):
+def get_similar(movie_id):
     """Gets a list of similar films to the movie specified by the movie id"""
-
     similar_films = []
     params = {"api_key": MOVIEDB_KEY}
-    for movie_id in movie_lists:
-        r = requests.get(
-            "https://api.themoviedb.org/3/movie/" + str(movie_id) + "/similar", params
-        )
-        r = r.json()
-        for i in range(len(r["results"])):
-            film = {
-                "movie_id": r["results"][i]["id"],
-                "movie_title": r["results"][i]["title"],
-                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
-                "rating": r["results"][i]["vote_average"],
-                "genres": get_genres(r["results"][i]["id"]),
-                "release_date": r["results"][i]["release_date"],
-                "on_watchlist": False,
-            }
-            similar_films.append(film)
-    return json.dumps(similar_films)
+
+    r = requests.get(
+        "https://api.themoviedb.org/3/movie/" + str(movie_id) + "/similar", params
+    )
+
+    r = r.json()
+    for i in range(len(r["results"])):
+        film = {
+            "movie_id": r["results"][i]["id"],
+            "movie_title": r["results"][i]["title"],
+            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+            "rating": r["results"][i]["vote_average"],
+            "genres": get_genres(r["results"][i]["id"]),
+            "release_date": r["results"][i]["release_date"],
+            "on_watchlist": False,
+        }
+        similar_films.append(film)
+    return similar_films
