@@ -19,15 +19,7 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-// console.log(firebaseConfig)
-
-// const app = initializeApp(firebaseConfig);
-// const db = getFirestore(app);
-
 firebase.initializeApp(firebaseConfig);
-
-
-
 
 
 function Login() {
@@ -61,13 +53,9 @@ function Login() {
                 
                 return signInWithPopup(auth, provider)
                     .then((result) => {
-                        // This gives you a Google Access Token. You can use it to access the Google API.
-                        const credential = GoogleAuthProvider.credentialFromResult(result);
-                        const token = credential.accessToken;
-                        console.log(token)
                         // The signed-in user info.
                         const user = result.user;
-                        // console.log(user)
+                        console.log(user)
 
                         const options = {
                             method: 'POST',
@@ -76,8 +64,6 @@ function Login() {
                         }
 
                         fetch('/login', options).then(() => {
-                            // sessionStorage.setItem('accessToken', user.accessToken)
-                            // setSwitchToSearch(true)
                             console.log('you logged in!')
 
                         }).catch((error) => {
@@ -99,7 +85,7 @@ function Login() {
     }
 
     if (switchToSearch) {
-        return <MovieSearch></MovieSearch>
+        return <MovieSearch authToken={accessToken} ></MovieSearch>
     } else {
         return <button onClick={doLogin}>Login</button>
     }
