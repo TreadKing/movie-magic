@@ -46,17 +46,19 @@ def new_login():
     try: 
         id_token = request.json["access_token"]
         decoded_token = auth.verify_id_token(id_token)
+        print(decoded_token)
         user_id = decoded_token['uid']
-        username = decoded_token["displayName"]
+        username = decoded_token["name"]
+        print(user_id)
 
-        users_ref = db.reference("/").child("users").child(str(user_id))
+        # users_ref = db.reference("/").child("users").child(str(user_id))
 
-        if not users_ref.get():
-            print(f"new user: {user_id}")
-            users_ref.set({"name": username})
+        # if not users_ref.get():
+        #     print(f"new user: {user_id}")
+        #     users_ref.set({"name": username})
 
-        else:
-            print(f"user {user_id} already exists")
+        # else:
+        #     print(f"user {user_id} already exists")
 
     except:
         print('nope')

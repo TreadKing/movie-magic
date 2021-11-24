@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MovieSearch from './MovieSearch.js';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, setPersistence, browserSessionPersistence, onAuthStateChanged } from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import {  } from 'firebase/compat/auth'
 import { } from 'firebase/compat/firestore'
@@ -33,43 +33,68 @@ firebase.initializeApp(firebaseConfig);
 function Login() {
 
     const [switchToSearch, setSwitchToSearch] = useState(false)
+    const [accessToken, setAccessToken] = useState('')
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/firebase.User
+            setAccessToken(user.accessToken);
+            
+            setSwitchToSearch(true);
+            // ...
+        } else {
+            // User is signed out
+            // ...
+            setSwitchToSearch(false);
+        }
+    });
+    
 
     function doLogin() {
-
+        
         const provider = new GoogleAuthProvider();
-        const auth = getAuth();
+        
+        setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                
+                return signInWithPopup(auth, provider)
+                    .then((result) => {
+                        // This gives you a Google Access Token. You can use it to access the Google API.
+                        const credential = GoogleAuthProvider.credentialFromResult(result);
+                        const token = credential.accessToken;
+                        console.log(token)
+                        // The signed-in user info.
+                        const user = result.user;
+                        // console.log(user)
 
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential.accessToken;
-                console.log(token)
-                // The signed-in user info.
-                const user = result.user;
-                console.log(user)
-                console.log(user.accessToken)
+                        const options = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 'access_token': user.accessToken})
+                        }
 
-                const options = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 'access_token': user.accessToken})
-                }
+                        fetch('/login', options).then(() => {
+                            // sessionStorage.setItem('accessToken', user.accessToken)
+                            // setSwitchToSearch(true)
+                            console.log('you logged in!')
 
-                fetch('/login', options).then(() => {
-                    sessionStorage.setItem('accessToken', user.accessToken)
-                    // setSwitchToSearch(true)
+                        }).catch((error) => {
+                            console.log(error)
+                        })
 
-                }).catch((error) => {
-                    console.log(error)
-                })
-
+                    }).catch((error) => {
+                        // Handle Errors here.
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode);
+                        console.log(errorMessage);
+                    });
             }).catch((error) => {
                 // Handle Errors here.
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log(errorCode);
-                console.log(errorMessage);
             });
     }
 
