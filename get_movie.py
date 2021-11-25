@@ -23,11 +23,12 @@ def search(query):
     r = r.json()
 
     if r["total_results"] != 0:
+        print(len(r["results"]))
         for i in range(len(r["results"])):
             film = {
                 "movie_id": r["results"][i]["id"],
                 "movie_title": r["results"][i]["original_title"],
-                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+                "movie_image": POSTER_URL + str(r["results"][i]["poster_path"]),
                 "rating": r["results"][i]["vote_average"],
                 "on_watchlist": False,
             }
