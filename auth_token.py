@@ -32,6 +32,7 @@ def decode_auth_token(auth_token):
         id_token = auth_token
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token["uid"]
+        print(uid)
         
         return uid
 
