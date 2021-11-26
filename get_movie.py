@@ -25,13 +25,21 @@ def search(query):
 
     if r["total_results"] != 0:
         for i in range(len(r["results"])):
+            try:
+                image_link = r["results"][i]["poster_path"]
+            except:
+                image_link = ""
+            try:
+                rating = r["results"][i]["vote_average"]
+            except:
+                rating = 0
             film = {
                 "movie_id": r["results"][i]["id"],
                 "movie_title": r["results"][i]["original_title"],
-                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
+                "movie_image": POSTER_URL + image_link,
                 "genres": get_genres(r["results"][i]["id"]),
                 "release_date": r["results"][i]["release_date"],
-                "rating": r["results"][i]["vote_average"],
+                "rating": rating,
                 "on_watchlist": False,
             }
             film_list.append(film)
