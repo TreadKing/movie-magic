@@ -64,106 +64,10 @@ def new_login():
 
     return 'hi'
 
-
-@app.route("/api/login", methods=["POST"])
-def login():
-    """Handles user login"""
-
-    google_provider_cfg = get_google_provider_cfg()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],
-    )
-
-    print(request_uri)
-    return redirect(request_uri)
-
-
-@app.route("/api/login/callback")
-def login_callback():
-    """Handles login callback"""
-    # get code from google
-    code = request.args.get("code")
-
-    # Find out what URL to hit to get tokens that allow you to ask for
-    # things on behalf of a user
-    google_provider_cfg = get_google_provider_cfg()
-    token_endpoint = google_provider_cfg["token_endpoint"]
-
-    # Prepare and send a request to get tokens! Yay tokens!
-    token_url, headers, body = client.prepare_token_request(
-        token_endpoint,
-        authorization_response=request.url,
-        redirect_url=request.base_url,
-        code=code,
-    )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
-
-    # Parse the tokens!
-    client.parse_request_body_response(json.dumps(token_response.json()))
-
-    #  get user info from google login
-    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
-    uri, headers, body = client.add_token(userinfo_endpoint)
-    userinfo_response = requests.get(uri, headers=headers, data=body)
-
-    # check if email is verified with google
-    if userinfo_response.json().get("email_verified"):
-        user_id = userinfo_response.json()["sub"]
-        username = userinfo_response.json()["given_name"].strip()
-
-        auth_token = encode_auth_token(str(user_id))
-
-        if auth_token:
-            # output = {"auth_token": auth_token, "username": username}
-
-            users_ref = db.reference("/").child("users").child(str(user_id))
-
-            if not users_ref.get():
-                print(f"new user: {user_id}")
-                users_ref.set({"Name": username})
-
-            else:
-                print(f"user {user_id} already exists")
-
-            return redirect(
-                flask.url_for("bp.index", auth_token=auth_token, username=username)
-            )
-            # return make_response(jsonify(output)), 200
-
-            # return make_response(jsonify(output)), 200
-            # return render_template("search.html")
-
-    else:
-        return make_response("User email not available or not verified by Google."), 200
-
-
-@app.route("/")
+@bp.route("/")
 def home():
     """Render login page"""
-    return render_template("login.html")
-
-
-@bp.route("/index")
-def index():
-    """Render index page"""
-    # data = {
-    #     "auth_token": request.args["auth_token"],
-    #     "username": request.args["username"]
-    # }
-    # print(data)
-    resp = make_response(render_template("index.html"))
-    resp.set_cookie("auth_token", request.args["auth_token"])
-    return resp
-
+    return render_template("index.html")
 
 def on_watchlist(user_id):
     """Gets user watchlist"""
