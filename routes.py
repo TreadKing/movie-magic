@@ -146,10 +146,10 @@ def login_callback():
         return make_response("User email not available or not verified by Google."), 200
 
 
-@app.route("/")
+@bp.route("/")
 def home():
     """Render login page"""
-    return render_template("login.html")
+    return render_template("index.html")
 
 
 @bp.route("/index")
@@ -392,7 +392,6 @@ if __name__ == "__main__":
             host=os.getenv("IP", "0.0.0.0"),
             port=int(os.getenv("PORT", 8080)),
             debug=True,
-            ssl_context="adhoc",
         )
     else:
         app.run(debug=True)
