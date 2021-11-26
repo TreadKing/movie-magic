@@ -153,6 +153,9 @@ def on_watchlist(user_id):
 
 
 def filter_watchlist(user_id, results):
+    """This function receives a user id and a list of movie results. It then obtains a list of films
+    on a user's watchlist and performs a set interesection with the list of movie results to check
+    what movies are on the watchlist and set their status of on_watchlist to True in the results. It then returns results"""
     films_on_watchlist = on_watchlist(user_id)
 
     films_from_results = []
@@ -170,20 +173,9 @@ def filter_watchlist(user_id, results):
 
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
-    """The function gets all the movie ids from a user's watchlist
-    and all the movie ids from the API call.
-    Then a list intersection is performed to determine what movie
-    ids already appear in the watchlist.
-    For each value in the list intersection, the value of 'on_watchlist'
-    in the API results is changed to True
-    so that the Frontend JS knows what movies from the API search can not
-    be added to the user's watchlist."""
-    # I tested by putting a movie id 671 under by Name in the db.
-    # By searching for 'Alan Rickman', the movie
-    # from the search will have 'on_watchlist' = True
-    print("aaaa")
+
     print(request.json)
-    print("ASDASAAAA")
+
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -191,16 +183,28 @@ def search_movie():
             jsonify({"error": "Invalid token. Please log in again."}), 500
         )
 
-    # user_input = flask.request.form.get("user_input")
     user_input = request.json["search_key"]
+    try:
+        genre_filter = request.json["genre"]
+    except Exception:
+        pass
+    try:
+        year_filter = request.json["year"]
+        year_before_after = request.json["year_before_after"]
+    except Exception:
+        pass
+    try:
+        rating_filter = request.json["rating"]
+        rating_before_after = request.json["rating_before_after"]
+    except Exception:
+        pass
+
     try:
         api_results = filter_watchlist(user_id, search(user_input))
 
         return make_response(jsonify(api_results)), 200
 
     except Exception as e:
-        # Give some sort of error that that actor name does not exist
-        # return None
         print(e)
         return make_response(jsonify({"message": str(e)})), 500
 
@@ -373,7 +377,7 @@ def delete_friend():
     return make_response(jsonify({"message": "delete sucessful"})), 200
 
 
-@app.route("/getusers", methods=["POST"])
+@app.route("/getUsers", methods=["POST"])
 def getusers():
     """Query all users from db and output the list for users to view"""
     names_list = []
