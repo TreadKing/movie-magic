@@ -146,10 +146,10 @@ def login_callback():
         return make_response("User email not available or not verified by Google."), 200
 
 
-@app.route("/")
+@bp.route("/")
 def home():
     """Render login page"""
-    return render_template("login.html")
+    return render_template("index.html")
 
 
 @bp.route("/index")
