@@ -184,9 +184,9 @@ def search_movie():
         )
     filters = {
         "genre_filter": "",
-        "year_filter": "",
+        "year_filter": None,
         "year_before_after": False,
-        "rating_filter": "",
+        "rating_filter": None,
         "rating_before_after": False,
     }
     user_input = request.json["search_key"]

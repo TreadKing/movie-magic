@@ -30,7 +30,7 @@ def get_genres(movie_id):
     return genre_list
 
 
-def search_actor(query, filters):
+def search_movie(query, filters):
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
     r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
@@ -54,8 +54,8 @@ def search_actor(query, filters):
             # Check if there are any filters. If not we can go ahead and add the film to film_list. Otherwise, perform filtering
             if (
                 filters["genre_filter"] != ""
-                or filters["rating_filter"] != ""
-                or filters["year_filter"] != ""
+                or filters["rating_filter"] != None
+                or filters["year_filter"] != None
             ):
                 # If genre filter is not empty, set the genre_to_look_for as the string in genre_filter.
                 # Compare the genres of the current film and see if the target genre is there. Otherwise, look at the next movie
@@ -63,7 +63,7 @@ def search_actor(query, filters):
                     genre_to_look_for = filters["genre_filter"]
                     if genre_to_look_for not in genres:
                         continue
-                if filters["rating_filter"] != "":
+                if filters["rating_filter"] != None:
                     rating_to_look_for = filters["rating_filter"]
                     if filters["rating_before_after"] == True:
                         # We include movies where the rating is above the rating_to_look_for
@@ -72,7 +72,7 @@ def search_actor(query, filters):
                     else:
                         if rating == None or rating > rating_to_look_for:
                             continue
-                if filters["year_filter"] != "":
+                if filters["year_filter"] != None:
                     release_year = datetime.strptime(release_date, "%Y-%m-%d")
                     year_to_look_for = filters["year_filter"]
                     if filters["year_before_after"] == True:
@@ -80,7 +80,7 @@ def search_actor(query, filters):
                         if release_year.year < year_to_look_for:
                             continue
                     else:
-                        if release_year.year < year_to_look_for:
+                        if release_year.year > year_to_look_for:
                             continue
             film = {
                 "movie_id": movie_id,
@@ -95,7 +95,7 @@ def search_actor(query, filters):
     return film_list
 
 
-def search_movie(query, filters):
+def search_actor(query, filters):
     # Tests if the query is a person and appends known for movies to the film list
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
@@ -108,7 +108,7 @@ def search_movie(query, filters):
             else:
                 movie_id = r["results"][0]["known_for"][i]["id"]
                 movie_title = r["results"][0]["known_for"][i]["original_title"]
-                genres = get_genres(r["results"][i]["id"])
+                genres = get_genres(movie_id)
                 release_date = r["results"][0]["known_for"][i]["release_date"]
                 try:
                     image_link = r["results"][0]["known_for"][i]["poster_path"]
@@ -120,14 +120,14 @@ def search_movie(query, filters):
                     rating = None
                 if (
                     filters["genre_filter"] != ""
-                    or filters["rating_filter"] != ""
-                    or filters["year_filter"] != ""
+                    or filters["rating_filter"] != None
+                    or filters["year_filter"] != None
                 ):
                     if filters["genre_filter"] != "":
                         genre_to_look_for = filters["genre_filter"]
                         if genre_to_look_for not in genres:
                             continue
-                    if filters["rating_filter"] != "":
+                    if filters["rating_filter"] != None:
                         rating_to_look_for = filters["rating_filter"]
                         if filters["rating_before_after"] == True:
                             # We include movies where the rating is above the rating_to_look_for
@@ -136,7 +136,7 @@ def search_movie(query, filters):
                         else:
                             if rating == None or rating > rating_to_look_for:
                                 continue
-                    if filters["year_filter"] != "":
+                    if filters["year_filter"] != None:
                         release_year = datetime.strptime(release_date, "%Y-%m-%d")
                         year_to_look_for = filters["year_filter"]
                         if filters["year_before_after"] == True:
@@ -144,7 +144,7 @@ def search_movie(query, filters):
                             if release_year.year < year_to_look_for:
                                 continue
                         else:
-                            if release_year.year < year_to_look_for:
+                            if release_year.year > year_to_look_for:
                                 continue
                 film = {
                     "movie_id": movie_id,
@@ -167,8 +167,20 @@ def search(query, filters):
     film_list = []
     film_list.append(search_actor(query, filters))
     film_list.append(search_movie(query, filters))
-
+    print(film_list)
     return film_list
+
+
+"""
+filters = {
+    "genre_filter": "",
+    "year_filter": None,
+    "year_before_after": False,
+    "rating_filter": 5,
+    "rating_before_after": False,
+}
+search("Star Wars", filters)
+"""
 
 
 def get_upcoming():
