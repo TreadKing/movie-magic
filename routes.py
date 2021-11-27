@@ -220,6 +220,50 @@ def search_movie():
         return make_response(jsonify({"message": str(e)})), 500
 
 
+@app.route("/getSimilar", methods=["POST"])
+def similar():
+    """Gets information from db to output to the user their watchlist"""
+    # Query information from db pertaining to user
+
+    auth_token = request.json["auth_token"]
+
+    user_id = decode_auth_token(auth_token)
+
+    if user_id == "Invalid token. Please log in again.":
+        return (
+            make_response(jsonify({"error": "Invalid token. Please log in again."})),
+            500,
+        )
+
+    watch_list_ref = (
+        db.reference("/").child("users").child(str(user_id)).child("watch_list")
+    )
+    watch_list = watch_list_ref.get()
+
+    try:
+        watch_list_output = []
+        for key in watch_list:
+            watch_list_item = {
+                "movie_id": key,
+                "movie_title": watch_list[key]["movie_title"],
+                "movie_image": watch_list[key]["movie_image"],
+                "rating": watch_list[key]["rating"],
+                "status": watch_list[key]["status"],
+                "comment": None,
+            }
+            watch_list_output.append(watch_list_item)
+        # Get random movie ids to get suggestions for
+        random_index = random.randint(0, len(watch_list_output) - 1)
+        random_id = watch_list_output[random_index]["movie_id"]
+        similar_movies = get_similar(random_id)
+
+    except Exception as e:
+        watch_list_output = []
+        print(e)
+
+    return make_response(jsonify(similar_movies)), 200
+
+
 @app.route("/getUpcoming", methods=["POST"])
 def upcoming():
     auth_token = request.json["auth_token"]
@@ -272,6 +316,46 @@ def get_list():
         random_index = random.randint(0, len(watch_list_output) - 1)
         random_id = watch_list_output[random_index]["movie_id"]
         movie_suggestions = get_similar(random_id)
+
+    except Exception as e:
+        watch_list_output = []
+        print(e)
+
+    return make_response(jsonify(watch_list_output)), 200
+
+
+@app.route("/getOtherUsersWatchlist", methods=["POST"])
+def get_other_watchlist(friend_id):
+    """Gets information from db to output to the user their watchlist"""
+    # Query information from db pertaining to user
+
+    auth_token = request.json["auth_token"]
+
+    user_id = decode_auth_token(auth_token)
+
+    if user_id == "Invalid token. Please log in again.":
+        return (
+            make_response(jsonify({"error": "Invalid token. Please log in again."})),
+            500,
+        )
+
+    watch_list_ref = (
+        db.reference("/").child("users").child(str(friend_id)).child("watch_list")
+    )
+    watch_list = watch_list_ref.get()
+
+    try:
+        watch_list_output = []
+        for key in watch_list:
+            watch_list_item = {
+                "movie_id": key,
+                "movie_title": watch_list[key]["movie_title"],
+                "movie_image": watch_list[key]["movie_image"],
+                "rating": watch_list[key]["rating"],
+                "status": watch_list[key]["status"],
+                "comment": None,
+            }
+            watch_list_output.append(watch_list_item)
 
     except Exception as e:
         watch_list_output = []
@@ -391,6 +475,7 @@ def delete_friend():
 def getusers():
     """Query all users from db and output the list for users to view"""
     names_list = []
+    ids_list = []
     ref = db.reference("users")
     names = ref.get()
     for i in names.items():
