@@ -182,25 +182,36 @@ def search_movie():
         return make_response(
             jsonify({"error": "Invalid token. Please log in again."}), 500
         )
-
+    filters = {
+        "genre_filter": "",
+        "year_filter": "",
+        "year_before_after": False,
+        "rating_filter": "",
+        "rating_before_after": False,
+    }
     user_input = request.json["search_key"]
     try:
         genre_filter = request.json["genre"]
+        filters["genre_filter"] = genre_filter
     except Exception:
         pass
     try:
         year_filter = request.json["year"]
         year_before_after = request.json["year_before_after"]
+        filters["year_filter"] = year_filter
+        filters["year_before_after"] = year_before_after
     except Exception:
         pass
     try:
         rating_filter = request.json["rating"]
         rating_before_after = request.json["rating_before_after"]
+        filters["rating_filter"] = rating_filter
+        filters["rating_before_after"] = rating_before_after
     except Exception:
         pass
 
     try:
-        api_results = filter_watchlist(user_id, search(user_input))
+        api_results = filter_watchlist(user_id, search(user_input, filters))
 
         return make_response(jsonify(api_results)), 200
 
@@ -246,7 +257,6 @@ def get_list():
     watch_list = watch_list_ref.get()
 
     try:
-
         watch_list_output = []
         for key in watch_list:
             watch_list_item = {
