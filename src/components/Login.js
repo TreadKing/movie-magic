@@ -7,7 +7,7 @@ import { } from 'firebase/compat/firestore'
 require('dotenv').config({path:__dirname+'/./../../.env'})
 
 // var firebase = require('firebase');
-var firebaseui = require('firebaseui');
+// var firebaseui = require('firebaseui');
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
