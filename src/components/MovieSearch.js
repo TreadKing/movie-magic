@@ -5,7 +5,7 @@ import UpcomingMovies from './UpcomingMovies.js';
 
 import makeOptions from '../api.js';
 
-import movieSearchData from '../sample_data/movieSearchData.js';
+// import movieSearchData from '../sample_data/movieSearchData.js';
 
 function MovieSearch(props) {
 
