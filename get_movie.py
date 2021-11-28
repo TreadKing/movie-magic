@@ -199,7 +199,7 @@ def get_upcoming():
             }
             movie_list.append(film)
     movie_list = sorted(movie_list, key=operator.itemgetter("release_date"))
-    return json.dumps(movie_list)
+    return movie_list
 
 
 def get_similar(movie_id):
