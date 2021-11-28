@@ -22,6 +22,7 @@ from app import app
 # from models import User
 from auth_token import encode_auth_token, decode_auth_token
 from firebase_admin import db
+from firebase_admin import auth
 
 from get_movie import search
 
@@ -39,106 +40,34 @@ def get_google_provider_cfg():
     """Gets google provider configuration"""
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
-
-@app.route("/api/login", methods=["POST"])
-def login():
+@app.route("/login", methods=["POST"])
+def new_login():
     """Handles user login"""
+    try: 
+        id_token = request.json["access_token"]
+        decoded_token = auth.verify_id_token(id_token)
+        user_id = decoded_token['uid']
+        username = decoded_token["name"]
 
-    google_provider_cfg = get_google_provider_cfg()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+        users_ref = db.reference("/").child("users").child(str(user_id))
 
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],
-    )
+        if not users_ref.get():
+            print(f"new user: {user_id}")
+            users_ref.set({"name": username})
 
-    print(request_uri)
-    return redirect(request_uri)
+        else:
+            print(f"user {user_id} already exists")
 
+    except:
+        print('nope')
+        return 'nope'
 
-@app.route("/api/login/callback")
-def login_callback():
-    """Handles login callback"""
-    # get code from google
-    code = request.args.get("code")
+    return 'hi'
 
-    # Find out what URL to hit to get tokens that allow you to ask for
-    # things on behalf of a user
-    google_provider_cfg = get_google_provider_cfg()
-    token_endpoint = google_provider_cfg["token_endpoint"]
-
-    # Prepare and send a request to get tokens! Yay tokens!
-    token_url, headers, body = client.prepare_token_request(
-        token_endpoint,
-        authorization_response=request.url,
-        redirect_url=request.base_url,
-        code=code,
-    )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
-
-    # Parse the tokens!
-    client.parse_request_body_response(json.dumps(token_response.json()))
-
-    #  get user info from google login
-    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
-    uri, headers, body = client.add_token(userinfo_endpoint)
-    userinfo_response = requests.get(uri, headers=headers, data=body)
-
-    # check if email is verified with google
-    if userinfo_response.json().get("email_verified"):
-        user_id = userinfo_response.json()["sub"]
-        username = userinfo_response.json()["given_name"].strip()
-
-        auth_token = encode_auth_token(str(user_id))
-
-        if auth_token:
-            # output = {"auth_token": auth_token, "username": username}
-
-            users_ref = db.reference("/").child("users").child(str(user_id))
-
-            if not users_ref.get():
-                print(f"new user: {user_id}")
-                users_ref.set({"Name": username})
-
-            else:
-                print(f"user {user_id} already exists")
-
-            return redirect(
-                flask.url_for("bp.index", auth_token=auth_token, username=username)
-            )
-            # return make_response(jsonify(output)), 200
-
-            # return make_response(jsonify(output)), 200
-            # return render_template("search.html")
-
-    else:
-        return make_response("User email not available or not verified by Google."), 200
-
-
-@app.route("/")
+@bp.route("/")
 def home():
-    """Render landing page"""
+    """Render login page"""
     return render_template("index.html")
-
-
-@bp.route("/index")
-def index():
-    """Render index page"""
-    # data = {
-    #     "auth_token": request.args["auth_token"],
-    #     "username": request.args["username"]
-    # }
-    # print(data)
-    resp = make_response(render_template("index.html"))
-    resp.set_cookie("auth_token", request.args["auth_token"])
-    return resp
-
 
 def on_watchlist(user_id):
     """Gets user watchlist"""
@@ -146,9 +75,11 @@ def on_watchlist(user_id):
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
 
-    for key, value in watchlist.items():
-        user_watchlist.append(key)
-        print(value)
+    if watchlist:
+        for key, value in watchlist.items():
+            user_watchlist.append(key)
+            print(value)
+
     return user_watchlist
 
 
@@ -165,9 +96,7 @@ def search_movie():
     # I tested by putting a movie id 671 under by Name in the db.
     # By searching for 'Alan Rickman', the movie
     # from the search will have 'on_watchlist' = True
-    print("aaaa")
-    print(request.json)
-    print("ASDASAAAA")
+
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -362,12 +291,11 @@ def getusers():
 app.register_blueprint(bp)
 
 if __name__ == "__main__":
-    if os.getenv("port"):
+    if os.getenv("PORT"):
         app.run(
             host=os.getenv("IP", "0.0.0.0"),
             port=int(os.getenv("PORT", 8080)),
             debug=True,
-            ssl_context="adhoc",
         )
     else:
-        app.run(debug=True, ssl_context="adhoc")
+        app.run(debug=True)
