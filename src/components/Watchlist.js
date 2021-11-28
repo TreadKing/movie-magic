@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MovieSearch from './MovieSearch.js';
 import Movie from './Movie.js';
-
+import firebase from 'firebase/compat/app';
 
 
 function Watchlist(props) {
@@ -55,6 +55,7 @@ function Watchlist(props) {
     } else {
         return <>
         <button onClick={() => setSwitchToSearch(true)}>Search</button>
+        <button onClick={() => firebase.auth().signOut()}> signout </button>
         {displayMovies()}
     </>
     }
