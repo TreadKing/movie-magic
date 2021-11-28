@@ -2,10 +2,11 @@
 import json
 import os
 import operator
+from datetime import date, datetime
 import requests
 
 from dotenv import find_dotenv, load_dotenv
-from datetime import date, datetime
+
 
 load_dotenv(find_dotenv())
 
@@ -19,75 +20,91 @@ def get_genres(movie_id):
 
     genre_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US"}
-    r = requests.get(
+    request = requests.get(
         "https://api.themoviedb.org/3/movie/" + str(movie_id), params=params
     )
-    r = r.json()
+    request = request.json()
 
-    for i in range(len(r["genres"])):
-        genre_list.append(r["genres"][i]["name"])
+    for i in range(len(request["genres"])):
+        genre_list.append(request["genres"][i]["name"])
 
     return genre_list
 
 
+def check_genre(genres, target_genre):
+    """Checks if a movie contains the specified genre. Returns true/false"""
+    if target_genre not in genres:
+        return False
+    return True
+
+
+def check_year(target_year, movie_release_year, year_before_after):
+    """Checks if a movie release year is greater than or less than the specified year"""
+    if year_before_after:
+        if movie_release_year.year < target_year:
+            return False
+    else:
+        if movie_release_year.year > target_year:
+            return False
+    return True
+
+
+def check_rating(target_rating, movie_rating, rating_to_look_for):
+    """Checks if a movie is rated greater than or less than a given rating"""
+    if rating_to_look_for:
+        # We include movies where the rating is above the rating_to_look_for
+        if movie_rating < target_rating:
+            return False
+    else:
+        if movie_rating > target_rating:
+            return False
+    return True
+
+
 def search_movie(query, filters):
+    """Finds a movie based on title"""
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
-    r = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
-    r = r.json()
+    request = requests.get("https://api.themoviedb.org/3/search/movie", params=params)
+    request = request.json()
 
-    if r["total_results"] != 0:
-        for i in range(len(r["results"])):
-            # Split out the movie info and perform try excepts to prevent errors if there is no rating or image link
-            movie_id = r["results"][i]["id"]
-            movie_title = r["results"][i]["original_title"]
-            genres = get_genres(r["results"][i]["id"])
-            release_date = r["results"][i]["release_date"]
+    if request["total_results"] != 0:
+        for i in range(len(request["results"])):
+            # Split out the movie info and perform try excepts to
+            # prevent errors if there is no rating or image link
+            genres = get_genres(request["results"][i]["id"])
+            release_date = request["results"][i]["release_date"]
             try:
-                image_link = r["results"][i]["poster_path"]
-            except:
+                image_link = request["results"][i]["poster_path"]
+            except KeyError:
                 image_link = ""
             try:
-                rating = r["results"][i]["vote_average"]
-            except:
+                rating = request["results"][i]["vote_average"]
+            except KeyError:
                 rating = None
-            # Check if there are any filters. If not we can go ahead and add the film to film_list. Otherwise, perform filtering
-            if (
-                filters["genre_filter"] != ""
-                or filters["rating_filter"] != None
-                or filters["year_filter"] != None
-            ):
-                # If genre filter is not empty, set the genre_to_look_for as the string in genre_filter.
-                # Compare the genres of the current film and see if the target genre is there. Otherwise, look at the next movie
-                if filters["genre_filter"] != "":
-                    genre_to_look_for = filters["genre_filter"]
-                    if genre_to_look_for not in genres:
-                        continue
-                if filters["rating_filter"] != None:
-                    rating_to_look_for = filters["rating_filter"]
-                    if filters["rating_before_after"] == True:
-                        # We include movies where the rating is above the rating_to_look_for
-                        if rating == None or rating < rating_to_look_for:
-                            continue
-                    else:
-                        if rating == None or rating > rating_to_look_for:
-                            continue
-                if filters["year_filter"] != None:
-                    release_year = datetime.strptime(release_date, "%Y-%m-%d")
-                    year_to_look_for = filters["year_filter"]
-                    if filters["year_before_after"] == True:
-                        # We include movies where the year is greater than the year_to_look_for
-                        if release_year.year < year_to_look_for:
-                            continue
-                    else:
-                        if release_year.year > year_to_look_for:
-                            continue
+            if filters["genre_filter"] != "":
+                genre_to_look_for = filters["genre_filter"]
+                if not check_genre(genres, genre_to_look_for):
+                    continue
+            if filters["rating_filter"] is not None:
+                if not check_rating(
+                    filters["rating_filter"], rating, filters["rating_before_after"]
+                ):
+                    continue
+            if filters["year_filter"] is not None:
+                release_year = datetime.strptime(release_date, "%Y-%m-%d")
+                if not check_year(
+                    release_year,
+                    filters["year_filter"],
+                    filters["year_before_after"],
+                ):
+                    continue
             film = {
-                "movie_id": movie_id,
-                "movie_title": movie_title,
+                "movie_id": request["results"][i]["id"],
+                "movie_title": request["results"][i]["original_title"],
                 "movie_image": POSTER_URL + image_link,
                 "genres": genres,
-                "release_date": r["results"][i]["release_date"],
+                "release_date": release_date,
                 "rating": rating,
                 "on_watchlist": False,
             }
@@ -96,59 +113,49 @@ def search_movie(query, filters):
 
 
 def search_actor(query, filters):
-    # Tests if the query is a person and appends known for movies to the film list
+    """Searches for movies based on actor name"""
     film_list = []
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "query": query}
-    r = requests.get("https://api.themoviedb.org/3/search/person", params=params)
-    r = r.json()
-    if r["total_results"] != 0:
-        for i in range(len(r["results"][0]["known_for"])):
-            if (r["results"][0]["known_for"][i]["media_type"]) != "movie":
+    request = requests.get("https://api.themoviedb.org/3/search/person", params=params)
+    request = request.json()
+    if request["total_results"] != 0:
+        for i in range(len(request["results"][0]["known_for"])):
+            if (request["results"][0]["known_for"][i]["media_type"]) != "movie":
                 i = i + 1
             else:
-                movie_id = r["results"][0]["known_for"][i]["id"]
-                movie_title = r["results"][0]["known_for"][i]["original_title"]
-                genres = get_genres(movie_id)
-                release_date = r["results"][0]["known_for"][i]["release_date"]
+                genres = get_genres(request["results"][0]["known_for"][i]["id"])
+                release_date = request["results"][0]["known_for"][i]["release_date"]
+                rating = None
                 try:
-                    image_link = r["results"][0]["known_for"][i]["poster_path"]
-                except:
+                    image_link = request["results"][0]["known_for"][i]["poster_path"]
+                except KeyError:
                     image_link = ""
                 try:
-                    rating = r["results"][0]["known_for"][i]["vote_average"]
-                except:
+                    rating = request["results"][0]["known_for"][i]["vote_average"]
+                except KeyError:
                     rating = None
-                if (
-                    filters["genre_filter"] != ""
-                    or filters["rating_filter"] != None
-                    or filters["year_filter"] != None
-                ):
-                    if filters["genre_filter"] != "":
-                        genre_to_look_for = filters["genre_filter"]
-                        if genre_to_look_for not in genres:
-                            continue
-                    if filters["rating_filter"] != None:
-                        rating_to_look_for = filters["rating_filter"]
-                        if filters["rating_before_after"] == True:
-                            # We include movies where the rating is above the rating_to_look_for
-                            if rating == None or rating < rating_to_look_for:
-                                continue
-                        else:
-                            if rating == None or rating > rating_to_look_for:
-                                continue
-                    if filters["year_filter"] != None:
-                        release_year = datetime.strptime(release_date, "%Y-%m-%d")
-                        year_to_look_for = filters["year_filter"]
-                        if filters["year_before_after"] == True:
-                            # We include movies where the year is greater than the year_to_look_for
-                            if release_year.year < year_to_look_for:
-                                continue
-                        else:
-                            if release_year.year > year_to_look_for:
-                                continue
+                if filters["genre_filter"] != "":
+                    genre_to_look_for = filters["genre_filter"]
+                    if not check_genre(genres, genre_to_look_for):
+                        continue
+                if filters["rating_filter"] is not None:
+                    rating_to_look_for = filters["rating_filter"]
+                    if not check_rating(
+                        filters["rating_filter"], rating, rating_to_look_for
+                    ):
+                        continue
+                if filters["year_filter"] is not None:
+                    release_year = datetime.strptime(release_date, "%Y-%m-%d")
+                    year_to_look_for = filters["year_filter"]
+                    if not check_year(
+                        filters["year_filter"], release_year, year_to_look_for
+                    ):
+                        continue
                 film = {
-                    "movie_id": movie_id,
-                    "movie_title": movie_title,
+                    "movie_id": request["results"][0]["known_for"][i]["id"],
+                    "movie_title": request["results"][0]["known_for"][i][
+                        "original_title"
+                    ],
                     "movie_image": POSTER_URL + image_link,
                     "genres": genres,
                     "release_date": release_date,
@@ -171,35 +178,23 @@ def search(query, filters):
     return film_list
 
 
-"""
-filters = {
-    "genre_filter": "",
-    "year_filter": None,
-    "year_before_after": False,
-    "rating_filter": 5,
-    "rating_before_after": False,
-}
-search("Star Wars", filters)
-"""
-
-
 def get_upcoming():
     """Gets a list of upcoming movies and sorts them by release date"""
     movie_list = []
     date_today = date.today()
     params = {"api_key": MOVIEDB_KEY, "language": "en-US", "region": "US"}
-    r = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
-    r = r.json()
-    for i in range(len(r["results"])):
-        movie_date = r["results"][i]["release_date"]
+    request = requests.get("https://api.themoviedb.org/3/movie/upcoming", params=params)
+    request = request.json()
+    for i in range(len(request["results"])):
+        movie_date = request["results"][i]["release_date"]
         release_date = datetime.strptime(movie_date, "%Y-%m-%d").date()
         if release_date > date_today:
             film = {
-                "movie_id": r["results"][i]["id"],
-                "movie_title": r["results"][i]["original_title"],
-                "movie_image": POSTER_URL + r["results"][i]["poster_path"],
-                "genres": get_genres(r["results"][i]["id"]),
-                "release_date": r["results"][i]["release_date"],
+                "movie_id": request["results"][i]["id"],
+                "movie_title": request["results"][i]["original_title"],
+                "movie_image": POSTER_URL + request["results"][i]["poster_path"],
+                "genres": get_genres(request["results"][i]["id"]),
+                "release_date": request["results"][i]["release_date"],
                 "on_watchlist": False,
             }
             movie_list.append(film)
@@ -212,19 +207,19 @@ def get_similar(movie_id):
     similar_films = []
     params = {"api_key": MOVIEDB_KEY}
 
-    r = requests.get(
+    request = requests.get(
         "https://api.themoviedb.org/3/movie/" + str(movie_id) + "/similar", params
     )
 
-    r = r.json()
-    for i in range(len(r["results"])):
+    request = request.json()
+    for i in range(len(request["results"])):
         film = {
-            "movie_id": r["results"][i]["id"],
-            "movie_title": r["results"][i]["title"],
-            "movie_image": POSTER_URL + r["results"][i]["poster_path"],
-            "rating": r["results"][i]["vote_average"],
-            "genres": get_genres(r["results"][i]["id"]),
-            "release_date": r["results"][i]["release_date"],
+            "movie_id": request["results"][i]["id"],
+            "movie_title": request["results"][i]["title"],
+            "movie_image": POSTER_URL + request["results"][i]["poster_path"],
+            "rating": request["results"][i]["vote_average"],
+            "genres": get_genres(request["results"][i]["id"]),
+            "release_date": request["results"][i]["release_date"],
             "on_watchlist": False,
         }
         similar_films.append(film)
