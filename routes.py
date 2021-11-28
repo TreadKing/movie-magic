@@ -5,7 +5,7 @@ includes routes
 
 from logging import error
 import os
-import json
+
 
 import random
 from flask.templating import render_template
@@ -21,7 +21,8 @@ from firebase_admin import db
 from app import app
 
 # from models import User
-from auth_token import encode_auth_token, decode_auth_token
+
+from auth_token import decode_auth_token
 
 from firebase_admin import db
 from firebase_admin import auth
@@ -62,10 +63,8 @@ def new_login():
         else:
             print(f"user {user_id} already exists")
     except:
-        print("nope")
-        return "nope"
+        return "An error occured"
 
-    return "hi"
 
 
 @bp.route("/")
@@ -303,6 +302,7 @@ def get_other_watchlist(friend_id):
 def add_to_list():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
 
+
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -340,11 +340,12 @@ def add_to_list():
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
+
 @app.route("/deleteFromWatchList", methods=["POST"])
 def delete_from_list():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    print("aaa")
-    print(request.json)
+    # print("aaa")
+    # print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -354,7 +355,7 @@ def delete_from_list():
         )
 
     movie_id = request.json["movie_id"]
-    print(movie_id)
+    # print(movie_id)
     movie_id_ref = (
         db.reference("users").child(user_id).child("watch_list").child(str(movie_id))
     )
@@ -362,8 +363,8 @@ def delete_from_list():
 
     if not movie_id_ref.get():
         return make_response(jsonify({"message": "delete successful"})), 200
-    else:
-        return make_response(jsonify({"message": "delete not successful"})), 500
+        # return make_response(jsonify({"message": "delete not successful"})), 500
+
 
 
 @app.route("/addToFriendslist", methods=["POST"])
@@ -406,11 +407,12 @@ def delete_friend():
     ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
-    for key, value in friendlist.items():
-        if value["friend_id"] == friend_id:
-            ref.child(key).set({})
 
-    return make_response(jsonify({"message": "delete sucessful"})), 200
+#     for key, value in friendlist.items():
+#         if value["friend_id"] == friend_id:
+#         ref.child(key).set({})
+
+#     return make_response(jsonify({"message": "delete sucessful"})), 200
 
 
 @app.route("/getUsers", methods=["POST"])
