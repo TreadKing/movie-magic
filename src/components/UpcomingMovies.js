@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import MovieList from './MovieList.js';
 import MovieSearch from './MovieSearch.js';
 import WatchlistPage from './WatchlistPage.js';
-import upcomingData from '../sample_data/upcomingData.js';
+// import upcomingData from '../sample_data/upcomingData.js';
 
 function UpcomingMovies(props) {
 

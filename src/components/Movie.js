@@ -11,7 +11,7 @@ import Comment from './movie_sub_components/Comment.js';
 import WatchlistStatus from './movie_sub_components/WatchlistStatus.js';
 import SimilarMoviesButton from './movie_sub_components/SimilarMoviesButton.js';
 
-import similarMoviesData from '../sample_data/similarMoviesData.js';
+// import similarMoviesData from '../sample_data/similarMoviesData.js';
 
 
 function Movie(props) {

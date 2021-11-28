@@ -3,7 +3,7 @@ import MovieSearch from './MovieSearch.js';
 import MovieList from './MovieList.js';
 import UpcomingMovies from './UpcomingMovies.js';
 import makeOptions from '../api.js';
-import watchlistData from '../sample_data/watchlistData.js';
+// import watchlistData from '../sample_data/watchlistData.js';
 
 function WatchlistPage(props) {
 
