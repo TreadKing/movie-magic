@@ -24,13 +24,14 @@ function WatchlistStatus(props) {
             'status': e.target.value,
             'movie_id': movieId
         }
+        console.log(e.target.value)
 
         const options = makeOptions(body)
         fetch('/addToWatchList', options)
-            .then(response => response.json())
-            .then(jsonData => setDeleteMessage(jsonData['message']))
+            // .then(response => response.json())
+            // .then(jsonData => setDeleteMessage(jsonData['message']))
 
-        setOnWatchlist(true)
+        // setOnWatchlist(true)
     }
 
     if (status === undefined) {
