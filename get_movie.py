@@ -82,7 +82,7 @@ def search_movie(query, filters):
                 rating = request["results"][i]["vote_average"]
             else:
                 rating = 0
-            if filters["genre_filter"] != "":
+            if filters["genre_filter"] is not "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):
                     continue
@@ -170,10 +170,10 @@ def search(query, filters):
     """Performs two API calls, one for searching by movie name and another for searching
     by actor name"""
     if query == "":
-        return Exception
-    film_list = []
-    film_list.append(search_actor(query, filters))
-    film_list.append(search_movie(query, filters))
+        return None
+    film_by_actor = search_actor(query, filters)
+    film_by_name = search_movie(query, filters)
+    film_list = film_by_actor + film_by_name
     return film_list
 
 
@@ -232,4 +232,4 @@ filters = {
     "rating_filter": None,
     "rating_before_after": False,
 }
-search("Russel Brand", filters)
+search("Rush Hour", filters)
