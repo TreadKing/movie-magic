@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import MovieSearch from './MovieSearch.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, setPersistence, browserSessionPersistence, onAuthStateChanged } from "firebase/auth";
 import firebase from 'firebase/compat/app';
-import {  } from 'firebase/compat/auth'
+import { } from 'firebase/compat/auth'
 import { } from 'firebase/compat/firestore'
-require('dotenv').config({path:__dirname+'/./../../.env'})
+require('dotenv').config({ path: __dirname + '/./../../.env' })
 
 // var firebase = require('firebase');
 // var firebaseui = require('firebaseui');
@@ -33,7 +33,7 @@ function Login() {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
             setAccessToken(user.accessToken);
-            
+
             setSwitchToSearch(true);
             // ...
         } else {
@@ -42,15 +42,15 @@ function Login() {
             setSwitchToSearch(false);
         }
     });
-    
+
 
     function doLogin() {
-        
+
         const provider = new GoogleAuthProvider();
-        
+
         setPersistence(auth, browserSessionPersistence)
             .then(() => {
-                
+
                 return signInWithPopup(auth, provider)
                     .then((result) => {
                         // The signed-in user info.
@@ -60,7 +60,7 @@ function Login() {
                         const options = {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 'access_token': user.accessToken})
+                            body: JSON.stringify({ 'access_token': user.accessToken })
                         }
 
                         fetch('/login', options).then(() => {
@@ -88,7 +88,6 @@ function Login() {
     } else {
         return <button onClick={doLogin}>Login</button>
     }
-
 }
 
 export default Login;
