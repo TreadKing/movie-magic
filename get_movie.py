@@ -74,15 +74,15 @@ def search_movie(query, filters):
             # prevent errors if there is no rating or image link
             genres = get_genres(request["results"][i]["id"])
             release_date = request["results"][i]["release_date"]
-            try:
+            if request["results"][i]["poster_path"] is not None:
                 image_link = request["results"][i]["poster_path"]
-            except KeyError:
+            else:
                 image_link = ""
-            try:
+            if request["results"][i]["vote_average"] is not None:
                 rating = request["results"][i]["vote_average"]
-            except KeyError:
-                rating = None
-            if filters["genre_filter"] != "":
+            else:
+                rating = 0
+            if filters["genre_filter"] is not "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):
                     continue
@@ -170,11 +170,10 @@ def search(query, filters):
     """Performs two API calls, one for searching by movie name and another for searching
     by actor name"""
     if query == "":
-        return Exception
-    film_list = []
-    film_list.append(search_actor(query, filters))
-    film_list.append(search_movie(query, filters))
-    print(film_list)
+        return None
+    film_by_actor = search_actor(query, filters)
+    film_by_name = search_movie(query, filters)
+    film_list = film_by_actor + film_by_name
     return film_list
 
 
@@ -224,3 +223,13 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return similar_films
+
+
+filters = {
+    "genre_filter": "",
+    "year_filter": None,
+    "year_before_after": False,
+    "rating_filter": None,
+    "rating_before_after": False,
+}
+search("Rush Hour", filters)
