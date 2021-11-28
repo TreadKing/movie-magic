@@ -130,7 +130,10 @@ def search_movie():
     user_input = request.json["search_key"]
     try:
         genre_filter = request.json["genre"]
-        filters["genre_filter"] = genre_filter
+        if not genre_filter:
+            filters["genre_filter"] = ""
+        else: 
+            filters["genre_filter"] = genre_filter
     except KeyError:
         pass
     try:
@@ -149,6 +152,7 @@ def search_movie():
         pass
 
     try:
+        print(search(user_input, filters))
         api_results = filter_watchlist(user_id, search(user_input, filters))
 
         return make_response(jsonify(api_results)), 200

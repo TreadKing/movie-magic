@@ -232,4 +232,6 @@ filters = {
     "rating_filter": None,
     "rating_before_after": False,
 }
-search("Rush Hour", filters)
+# search("Rush Hour", filters)
+
+# print(search("dune", filters))
