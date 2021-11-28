@@ -32,7 +32,7 @@ function UpcomingMovies(props) {
 
         fetch('/getUpcoming')
             .then(response => response.json())
-            .then(results => setUpcomingMoviesData(results))
+            // .then(results => setUpcomingMoviesData(results))
 
     }
 
