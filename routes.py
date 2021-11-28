@@ -3,6 +3,7 @@ main backend for flask server.
 includes routes
 """
 
+from logging import error
 import os
 import json
 
@@ -145,9 +146,8 @@ def on_watchlist(user_id):
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
 
-    for key, value in watchlist.items():
-        user_watchlist.append(key)
-        print(value)
+    for key in watchlist.items():
+        user_watchlist.append(key[0])
     return user_watchlist
 
 
@@ -162,6 +162,7 @@ def filter_watchlist(user_id, results):
     films_on_watchlist = on_watchlist(user_id)
 
     films_from_results = []
+
     for item in results:
         films_from_results.append(str(item["movie_id"]))
     already_added = list(set(films_from_results) & set(films_on_watchlist))
@@ -431,14 +432,29 @@ def delete_from_list():
 
 
 @app.route("/addToFriendslist", methods=["POST"])
-def add_friend(friend_id):
+def add_friend():
     """Given a friend id, add an id to a user's friendlist"""
-
-    user_id = ""
+    auth_token = request.json["auth_token"]
+    user_id = decode_auth_token(auth_token)
+    if user_id == "Invalid token. Please log in again.":
+        return (
+            make_response(jsonify({"error": "Invalid token. Please log in again."})),
+            500,
+        )
+    friend_id = request.json["friend_id"]
+    name = request.json["name"]
     ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
-
-    # Insert friend id to friends list
+    if not friendlist():
+        friendlist.set(
+            {
+                "id": friend_id,
+                "username": name,
+            }
+        )
+        return make_response(jsonify({"message": "add successful"})), 200
+    else:
+        return make_response(jsonify({"message": "friend already in friendlist"})), 200
 
 
 @app.route("/deleteFromFriendsList", methods=["POST"])
