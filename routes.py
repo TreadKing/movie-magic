@@ -16,14 +16,13 @@ from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
 # from requests import api
-
+from firebase_admin import db
 from app import app
 
 # from models import User
 from auth_token import encode_auth_token, decode_auth_token
-from firebase_admin import db
 
-from get_movie import search, get_upcoming, get_genres, get_similar
+from get_movie import search, get_upcoming, get_similar
 
 bp = flask.Blueprint("bp", __name__, template_folder="./build")
 # Configuration
@@ -153,9 +152,13 @@ def on_watchlist(user_id):
 
 
 def filter_watchlist(user_id, results):
-    """This function receives a user id and a list of movie results. It then obtains a list of films
-    on a user's watchlist and performs a set interesection with the list of movie results to check
-    what movies are on the watchlist and set their status of on_watchlist to True in the results. It then returns results"""
+    """This function receives a user id and a list of movie results.
+    It then obtains a list of films
+    on a user's watchlist and performs a set interesection with
+    the list of movie results to check
+    what movies are on the watchlist and set their status of
+    on_watchlist to True in the results.
+    It then returns results"""
     films_on_watchlist = on_watchlist(user_id)
 
     films_from_results = []
@@ -173,7 +176,7 @@ def filter_watchlist(user_id, results):
 
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
-
+    """Retrieves a list of movies that match the input query"""
     print(request.json)
 
     auth_token = request.json["auth_token"]
@@ -193,21 +196,21 @@ def search_movie():
     try:
         genre_filter = request.json["genre"]
         filters["genre_filter"] = genre_filter
-    except Exception:
+    except KeyError:
         pass
     try:
         year_filter = request.json["year"]
         year_before_after = request.json["year_before_after"]
         filters["year_filter"] = year_filter
         filters["year_before_after"] = year_before_after
-    except Exception:
+    except KeyError:
         pass
     try:
         rating_filter = request.json["rating"]
         rating_before_after = request.json["rating_before_after"]
         filters["rating_filter"] = rating_filter
         filters["rating_before_after"] = rating_before_after
-    except Exception:
+    except KeyError:
         pass
 
     try:
@@ -215,9 +218,9 @@ def search_movie():
 
         return make_response(jsonify(api_results)), 200
 
-    except Exception as e:
-        print(e)
-        return make_response(jsonify({"message": str(e)})), 500
+    except KeyError as error:
+        print(error)
+        return make_response(jsonify({"message": str(error)})), 500
 
 
 @app.route("/getSimilar", methods=["POST"])
@@ -257,15 +260,16 @@ def similar():
         random_id = watch_list_output[random_index]["movie_id"]
         similar_movies = get_similar(random_id)
 
-    except Exception as e:
+    except KeyError as error:
         watch_list_output = []
-        print(e)
+        print(error)
 
     return make_response(jsonify(similar_movies)), 200
 
 
 @app.route("/getUpcoming", methods=["POST"])
 def upcoming():
+    """Get a list of upcoming movies"""
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -275,15 +279,14 @@ def upcoming():
     try:
         upcoming_results = filter_watchlist(user_id, get_upcoming())
         return make_response(jsonify(upcoming_results)), 200
-    except Exception as e:
-        print(e)
-        return make_response(jsonify({"message": str(e)})), 500
+    except KeyError as error:
+        print(error)
+        return make_response(jsonify({"message": str(error)})), 500
 
 
 @app.route("/getWatchList", methods=["POST"])
 def get_list():
     """Gets information from db to output to the user their watchlist"""
-    # Query information from db pertaining to user
 
     auth_token = request.json["auth_token"]
 
@@ -312,14 +315,10 @@ def get_list():
                 "comment": None,
             }
             watch_list_output.append(watch_list_item)
-        # Get random movie ids to get suggestions for
-        random_index = random.randint(0, len(watch_list_output) - 1)
-        random_id = watch_list_output[random_index]["movie_id"]
-        movie_suggestions = get_similar(random_id)
 
-    except Exception as e:
+    except KeyError as error:
         watch_list_output = []
-        print(e)
+        print(error)
 
     return make_response(jsonify(watch_list_output)), 200
 
@@ -357,9 +356,9 @@ def get_other_watchlist(friend_id):
             }
             watch_list_output.append(watch_list_item)
 
-    except Exception as e:
+    except KeyError as error:
         watch_list_output = []
-        print(e)
+        print(error)
 
     return make_response(jsonify(watch_list_output)), 200
 
@@ -367,13 +366,6 @@ def get_other_watchlist(friend_id):
 @app.route("/addToWatchList", methods=["POST"])
 def add_to_list():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
-    """
-    auth_token
-    movie_id
-    movie_title
-    movie_image
-    rating
-    """
 
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
@@ -408,7 +400,6 @@ def add_to_list():
 
         # Send user to view their own watchlist
         return make_response(jsonify({"message": "add successful"})), 200
-
     else:
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
@@ -442,7 +433,7 @@ def delete_from_list():
 @app.route("/addToFriendslist", methods=["POST"])
 def add_friend(friend_id):
     """Given a friend id, add an id to a user's friendlist"""
-    # Needs to receive a user id and a friend id
+
     user_id = ""
     ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
@@ -460,7 +451,7 @@ def delete_friend():
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
             500,
         )
-
+    friend_id = request.json["friend_id"]
     ref = db.reference("users").child(user_id).child("FriendList")
     friendlist = ref.get()
 
@@ -474,13 +465,13 @@ def delete_friend():
 @app.route("/getUsers", methods=["POST"])
 def getusers():
     """Query all users from db and output the list for users to view"""
-    names_list = []
-    ids_list = []
+    users_list = []
     ref = db.reference("users")
     names = ref.get()
     for i in names.items():
-        names_list.append(i[1]["name"])
-    return names_list
+        user = {"id": i, "name": i[1]["name"]}
+        users_list.append(user)
+    return users_list
 
 
 app.register_blueprint(bp)
