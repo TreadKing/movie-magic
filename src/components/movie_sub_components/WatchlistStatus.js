@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import makeOptions from '../../api.js';
 
 function WatchlistStatus(props) {
     const movieId = props.movieId
+    const authToken = props.authToken
     const [status, setStatus] = useState(props.status)
 
     function addToWatchlist(e) {
@@ -17,18 +19,18 @@ function WatchlistStatus(props) {
         // receive:
         //      message ("add successful" or "movie already on watchlist")
 
-        // const body = {
-        //     'auth_token': authToken,
-        //     'status': { e.target.value },
-        //     'movie_id': { movieId }
-        // }
+        const body = {
+            'auth_token': authToken,
+            'status': e.target.value,
+            'movie_id': movieId
+        }
 
-        // const options = makeOptions(body)
-        // fetch('/addToWatchList', options)
-        //     .then(response => response.json())
-        //     .then(jsonData => setDeleteMessage(jsonData['message']))
+        const options = makeOptions(body)
+        fetch('/addToWatchList', options)
+            .then(response => response.json())
+            .then(jsonData => setDeleteMessage(jsonData['message']))
 
-        // setOnWatchlist(true)
+        setOnWatchlist(true)
     }
 
     if (status === undefined) {
