@@ -74,14 +74,14 @@ def search_movie(query, filters):
             # prevent errors if there is no rating or image link
             genres = get_genres(request["results"][i]["id"])
             release_date = request["results"][i]["release_date"]
-            try:
+            if request["results"][i]["poster_path"] is not None:
                 image_link = request["results"][i]["poster_path"]
-            except KeyError:
+            else:
                 image_link = ""
-            try:
+            if request["results"][i]["vote_average"] is not None:
                 rating = request["results"][i]["vote_average"]
-            except KeyError:
-                rating = None
+            else:
+                rating = 0
             if filters["genre_filter"] != "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):
@@ -174,7 +174,6 @@ def search(query, filters):
     film_list = []
     film_list.append(search_actor(query, filters))
     film_list.append(search_movie(query, filters))
-    print(film_list)
     return film_list
 
 
@@ -224,3 +223,13 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return similar_films
+
+
+filters = {
+    "genre_filter": "",
+    "year_filter": None,
+    "year_before_after": False,
+    "rating_filter": None,
+    "rating_before_after": False,
+}
+search("Russel Brand", filters)
