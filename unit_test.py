@@ -92,7 +92,7 @@ class TestStringMethods(unittest.TestCase):
             "rating_filter": None,
             "rating_before_after": False,
         }
-        result = search(user_input, filter)
+        result = search(user_input, filters)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 

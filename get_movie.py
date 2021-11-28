@@ -82,7 +82,7 @@ def search_movie(query, filters):
                 rating = request["results"][i]["vote_average"]
             else:
                 rating = 0
-            if filters["genre_filter"] is not "":
+            if filters["genre_filter"] != "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):
                     continue
@@ -232,4 +232,4 @@ filters = {
     "rating_filter": None,
     "rating_before_after": False,
 }
-search("Rush Hour", filters)
+print(search("Rush Hour", filters))
