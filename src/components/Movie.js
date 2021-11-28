@@ -48,10 +48,10 @@ function Movie(props) {
         // receive:
         //      message ("add successful" or "movie already on watchlist")
 
-        const body = {
-            'auth_token': authToken,
+        const body = {'auth_token': authToken,
             'status': 'unwatched',
             'movie_id': id
+            
         }
 
         const options = makeOptions(body)
