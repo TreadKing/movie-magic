@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import MovieList from './MovieList.js';
 import MovieSearch from './MovieSearch.js';
 import WatchlistPage from './WatchlistPage.js';
+import Logout from './Logout.js';
 import makeOptions from '../api.js';
 // import upcomingData from '../sample_data/upcomingData.js';
 
@@ -46,6 +47,7 @@ function UpcomingMovies(props) {
         return <WatchlistPage authToken={authToken} />
     } else {
         return <>
+            <Logout></Logout>
             <span className="menu">
                 <span className="switch-search-button-container">
                     <button className="switch-search-button"

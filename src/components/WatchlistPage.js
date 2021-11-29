@@ -3,7 +3,7 @@ import MovieSearch from './MovieSearch.js';
 import MovieList from './MovieList.js';
 import UpcomingMovies from './UpcomingMovies.js';
 import makeOptions from '../api.js';
-// import watchlistData from '../sample_data/watchlistData.js';
+import Logout from './Logout.js';
 
 function WatchlistPage(props) {
 
@@ -36,6 +36,7 @@ function WatchlistPage(props) {
         return <UpcomingMovies authToken={authToken} />
     } else {
         return <>
+            <Logout></Logout>
             <span className="menu">
                 <span className="switch-search-button-container">
                     <button className="switch-search-button"
