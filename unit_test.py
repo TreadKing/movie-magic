@@ -3,8 +3,8 @@ import unittest
 
 # pylint: disable=E0401
 from get_movie import get_genres, get_similar, get_upcoming, search
-# pylint: disable=R0801
-filters = {
+
+test_filters = {
     "genre_filter": "",
     "year_filter": None,
     "year_before_after": False,
@@ -25,7 +25,7 @@ class TestStringMethods(unittest.TestCase):
         THEN check movie is added to list
         """
         user_input = "Russell Brand"
-        api_results = search(user_input, filters)
+        api_results = search(user_input, test_filters)
         self.assertIsNotNone(api_results)
         movie_titles_list = []
         for movie in api_results:
@@ -40,12 +40,12 @@ class TestStringMethods(unittest.TestCase):
         THEN check valid movie is added to list or exception thrown if blank
         """
         user_input = ""
-        movie_text = search(user_input, filters)
+        movie_text = search(user_input, test_filters)
         self.assertRaises(Exception, search)
         self.assertIsNone(movie_text)
 
         user_input = "Rush Hour"
-        movie_text = search(user_input, filters)
+        movie_text = search(user_input, test_filters)
         movie_titles = []
         for movie in movie_text:
             movie_titles.append(movie["movie_title"])
@@ -58,7 +58,7 @@ class TestStringMethods(unittest.TestCase):
         THEN check valid Search results
         """
         user_input = "Rush Hour"
-        result = search(user_input, filters)
+        result = search(user_input, test_filters)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
