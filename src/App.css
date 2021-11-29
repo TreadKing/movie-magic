@@ -4,16 +4,92 @@ body {
     background-color: #333333;
     text-align: center;
     font-family: sans-serif;
-}
-
-.search-input-container {
+    margin: none;
+    padding: none;
+  }
+  
+  h1 {
+    color: green;
+  }
+  
+  .menu {
+    display: block;
+    text-align: left;
+  }
+  
+  .watchlist-button-container {
+    display: inline-block;
+    text-align: left;
+    margin: 0px;
+    padding: none;
+  }
+  
+  .watchlist-button {
+    border: none;
+    background-color: transparent;
+    font-size: inherit;
+    color: white;
+  }
+  .watchlist-button:hover {
+    cursor: pointer;
+    color: purple;
+  }
+  
+  .upcoming-movies-button-container {
+    display: inline-block;
+    text-align: left;
+    margin: 0px;
+    padding: none;
+  }
+  
+  .upcoming-movies-button {
+    border: none;
+    background-color: transparent;
+    font-size: inherit;
+    color: white;
+  }
+  
+  .upcoming-movies-button:hover {
+    cursor: pointer;
+    color: purple;
+  }
+  
+  .switch-search-button-container {
+    display: inline-block;
+    text-align: left;
+    margin: 0px;
+    padding: none;
+  }
+  
+  .switch-search-button {
+    border: none;
+    background-color: transparent;
+    font-size: inherit;
+    color: white;
+  }
+  
+  .switch-search-button:hover {
+    cursor: pointer;
+    color: purple;
+  }
+  
+  
+  
+  .search-form-container {
+    display: block;
+    width: 400px;
+    margin: auto;
+    text-align: left;
+  }
+  
+  .search-input-container {
     display: inline-block;
     background: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF, #57E6E6);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-}
-
-.search-input {
+  }
+  
+  .search-input {
     font-family: inherit;
     width: 300px;
     height: 35px;
@@ -27,108 +103,227 @@ body {
     padding-bottom: 0px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-}
-
-.search-input:focus {
+  }
+  
+  .search-input:focus {
     outline: none;
-}
-
-.search-button {
+  }
+  
+  .search-button {
     font-family: inherit;
     height: 35px;
     border: none;
     background-color: #333333;
     color: white;
     font-size: 15px;
-}
-
-.search-button:hover {
+  }
+  
+  .search-button:hover {
     cursor: pointer;
     background-color: #555555;
-}
-
-/* End Movie Search */
-
-/* Movie */
-
-.movie-container {
+  }
+  
+  .select-genre-container {
+    width: 318px;
+  }
+  
+  .select-genre-label {
+    color: white;
+  }
+  
+  .select-genre {
+    float:right;
+    height: 25px;
+    border-radius: 5px;
+  }
+  
+  .input-year-container-2 {
+    width: 318px;
+  }
+  
+  .input-year-label-2 {
+    color: white;
+  }
+  
+  .year-before-after-input-2 {
+    float: right;
+    height: 25px;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+  
+  .year-input-2 {
+    float: right;
+    height: 25px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+  
+  .rating-container {
+    width: 318px;
+  }
+  
+  .rating-less-greater-input {
+    float: right;
+    border-radius: 5px;
+  }
+  
+  .rating-label {
+    color: white;
+  }
+  
+  .rating-input {
+    float: right;
+    border-radius: 5px;;
+  }
+  
+  /* End Movie Search */
+  
+  /* Movie */
+  
+  .movie-container {
     background-color: #8900b3;
     border: 3px solid #008cff;
-    width: 300px;
+    width: 318px;
+    /* height: 318px; */
     margin: auto;
     margin-top: 10px;
     position: relative;
-    left: -35px;
+    /* left: -35px; */
     border-radius: 5px;
     font-size: 17px;
     color: white;
-}
-
-.add-movie-button {
-    width: 30px;
-    height: 30px;
-    background-color: none;
-    border: none;
-    margin: 3px;
-    border-radius: 5px;
-    font-size: 25px;
-    color: green;
-    background-color: white(0, 233, 0);
-}
-
-.add-movie-button:hover {
-    background-color: green;
-    color: white;
-    cursor: pointer;
-}
-
-
-.add-movie-button:disabled {
-    background-color: #5d0179;
-    color: green;
-    cursor: arrow;
-}
-
-.add-movie-button:disabled:hover {
-    background-color: #5d0179;
-    color: green;
-    cursor: auto;
-}
-
-
-
-.remove-movie-button {
-    width: 30px;
-    height: 30px;
-    border: none;
-    margin: 3px;
-    border-radius: 5px;
-    font-size: 25px;
-    color: red;
-    background-color: white(255, 0, 0);
-}
-
-.remove-movie-button:hover {
-    background-color: red;
-    color: white;
-    cursor: pointer;
-}
-
-.remove-movie-button:disabled {
-    background-color: #5d0179;
-    color: red;
-    cursor: arrow;
-}
-
-.remove-movie-button:disabled:hover {
-    background-color: #5d0179;
-    color: red;
-    cursor: auto;
-}
-
-.movie-image {
+  }
+  
+  .movie-title-container {
+    display: block;
+    margin: 10px;
+  }
+  
+  .movie-title {
+  
+  }
+  
+  .movie-title-empty {
+  
+  }
+  
+  .movie-image-container {
+    display: block;
+  }
+  
+  .movie-image {
     border-radius: 10px;
-    margin-bottom: 5px;
-}
-
-/* End Movie */
+  }
+  
+  .movie-image-empty {
+  
+  }
+  
+  .add-and-delete-container {
+    display: block;
+  }
+  
+  .movie-add-button-container {
+  
+  }
+  
+  .movie-add-button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    color: white;
+    background-color: green;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  
+  .movie-add-button:disabled {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    color: white;
+    background-color: rgb(0, 78, 0);
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  
+  .movie-add-button:hover {
+    cursor: pointer;
+    background-color: rgb(0, 90, 0);
+  }
+  
+  .movie-add-button:hover:disabled {
+    cursor: auto;
+    background-color:rgb(0, 78, 0);
+  }
+  
+  .movie-add-button-empty {
+  
+  }
+  
+  .movie-delete-button-container {
+  
+  }
+  
+  .movie-delete-button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    color: white;
+    background-color: red;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  
+  .movie-delete-button:hover {
+    cursor: pointer;
+    background-color: rgb(192, 0, 0);
+  }
+  
+  .movie-delete-button:disabled {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    color: white;
+    background-color: rgb(173, 0, 0);
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  
+  .movie-delete-button-empty {
+    
+  }
+  
+  .movie-delete-button:hover:disabled {
+    cursor: auto;
+    background-color: rgb(173, 0, 0);;
+  }
+  
+  .movie-rating-container {
+  
+  }
+  
+  .movie-rating-label {
+    font-size: 15px;
+  }
+  
+  .movie-rating {
+    display: block;
+    font-size: 20px;
+    color: yellow;
+  }
+  
+  .movie-genres-container {
+    display: block;
+  }
+  
+  .movie-genres {
+  
+  }
+  
+  .movie-genres-empty {
+  
+  }
+  
