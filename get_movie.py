@@ -73,7 +73,10 @@ def search_movie(query, filters):
             # Split out the movie info and perform try excepts to
             # prevent errors if there is no rating or image link
             genres = get_genres(request["results"][i]["id"])
-            release_date = request["results"][i]["release_date"]
+            try:
+                release_date = request["results"][i]["release_date"]
+            except KeyError:
+                release_date = "None"
             if request["results"][i]["poster_path"] is not None:
                 image_link = request["results"][i]["poster_path"]
             else:
@@ -223,3 +226,5 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return similar_films
+
+
