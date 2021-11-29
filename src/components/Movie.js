@@ -57,7 +57,7 @@ function Movie(props) {
             'movie_id': id,
             'movie_title': title,
             'movie_image': image,
-            'movie_rating': rating,
+            'rating': rating,
             'status': 'unwatched'
         }
 

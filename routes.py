@@ -319,6 +319,7 @@ def add_to_list():
     movie_title = request.json["movie_title"]
     movie_image = request.json["movie_image"]
     rating = request.json["rating"]
+    status = request.json["status"]
 
     movie_id_ref = (
         db.reference("/")
@@ -341,6 +342,16 @@ def add_to_list():
         # Send user to view their own watchlist
         return make_response(jsonify({"message": "add successful"})), 200
     else:
+        print(status)
+        # movie_id_ref.set({})
+        movie_id_ref.set(
+            {
+                "status": status,
+                "movie_title": movie_title,
+                "movie_image": movie_image,
+                "rating": rating,
+            }
+        )
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 

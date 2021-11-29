@@ -30,16 +30,16 @@ function WatchlistStatus(props) {
             'movie_id': id,
             'movie_title': title,
             'movie_image': image,
-            'movie_rating': rating,
-            'status': 'unwatched'
+            'rating': rating,
+            'status': e.target.value
         }
 
         const options = makeOptions(body)
         fetch('/addToWatchList', options)
             .then(response => response.json())
-            .then(jsonData => setDeleteMessage(jsonData['message']))
+            // .then(jsonData => setDeleteMessage(jsonData['message']))
 
-        setOnWatchlist(true)
+        // setOnWatchlist(true)
     }
 
     if (status === undefined) {
