@@ -4,6 +4,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, setPersistence, browserSe
 import firebase from 'firebase/compat/app';
 import { } from 'firebase/compat/auth'
 import { } from 'firebase/compat/firestore'
+import Landing from './Landing.js'
 require('dotenv').config({ path: __dirname + '/./../../.env' })
 
 // var firebase = require('firebase');
@@ -86,7 +87,7 @@ function Login() {
     if (switchToSearch) {
         return <MovieSearch authToken={accessToken} ></MovieSearch>
     } else {
-        return <button onClick={doLogin}>Login</button>
+        return <Landing doLogin={doLogin}/>
     }
 }
 

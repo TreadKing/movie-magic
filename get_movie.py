@@ -40,19 +40,26 @@ def check_genre(genres, target_genre):
 
 def check_year(target_year, movie_release_year, year_before_after):
     """Checks if a movie release year is greater than or less than the specified year"""
-    if year_before_after:
-        if movie_release_year.year < target_year:
+    # print(movie_release_year)
+    # print(target_year)
+    if year_before_after == 'false':
+        # print('after')
+        if int(movie_release_year) < int(target_year):
             return False
     else:
-        if movie_release_year.year > target_year:
+        # print('before')
+        if int(movie_release_year) > int(target_year):
             return False
     return True
 
 
 def check_rating(target_rating, movie_rating, rating_to_look_for):
     """Checks if a movie is rated greater than or less than a given rating"""
-    if rating_to_look_for:
+    print(rating_to_look_for)
+    if rating_to_look_for == 'false':
         # We include movies where the rating is above the rating_to_look_for
+        print(movie_rating)
+        print(target_rating)
         if movie_rating < target_rating:
             return False
     else:
@@ -92,8 +99,8 @@ def search_movie(query, filters):
                 ):
                     continue
             if filters["year_filter"] is not None:
-                release_year = datetime.strptime(release_date, "%Y-%m-%d")
-                if not check_year(
+                release_year = release_date[:4]
+                if check_year(
                     release_year,
                     filters["year_filter"],
                     filters["year_before_after"],
@@ -139,15 +146,14 @@ def search_actor(query, filters):
                     if not check_genre(genres, genre_to_look_for):
                         continue
                 if filters["rating_filter"] is not None:
-                    rating_to_look_for = filters["rating_filter"]
                     if not check_rating(
-                        filters["rating_filter"], rating, rating_to_look_for
+                        filters["rating_filter"], rating, filters["rating_before_after"]
                     ):
                         continue
                 if filters["year_filter"] is not None:
-                    release_year = datetime.strptime(release_date, "%Y-%m-%d")
+                    release_year = release_date[:4]
                     year_to_look_for = filters["year_filter"]
-                    if not check_year(
+                    if check_year(
                         filters["year_filter"], release_year, year_to_look_for
                     ):
                         continue

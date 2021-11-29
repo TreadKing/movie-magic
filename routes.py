@@ -146,7 +146,10 @@ def search_movie():
     try:
         rating_filter = request.json["rating"]
         rating_before_after = request.json["rating_before_after"]
-        filters["rating_filter"] = rating_filter
+        if rating_filter:
+            filters["rating_filter"] = int(rating_filter)
+        else:
+            filters["rating_filter"] = rating_filter
         filters["rating_before_after"] = rating_before_after
     except KeyError:
         pass
@@ -168,6 +171,7 @@ def similar():
     # Query information from db pertaining to user
 
     auth_token = request.json["auth_token"]
+    movie_id = request.json["movie_id"]
 
     user_id = decode_auth_token(auth_token)
 
@@ -177,30 +181,10 @@ def similar():
             500,
         )
 
-    watch_list_ref = (
-        db.reference("/").child("users").child(str(user_id)).child("watch_list")
-    )
-    watch_list = watch_list_ref.get()
-
     try:
-        watch_list_output = []
-        for key in watch_list:
-            watch_list_item = {
-                "movie_id": key,
-                "movie_title": watch_list[key]["movie_title"],
-                "movie_image": watch_list[key]["movie_image"],
-                "rating": watch_list[key]["rating"],
-                "status": watch_list[key]["status"],
-                "comment": None,
-            }
-            watch_list_output.append(watch_list_item)
-        # Get random movie ids to get suggestions for
-        random_index = random.randint(0, len(watch_list_output) - 1)
-        random_id = watch_list_output[random_index]["movie_id"]
-        similar_movies = get_similar(random_id)
+        similar_movies = get_similar(movie_id)
 
     except KeyError as error:
-        watch_list_output = []
         print(error)
 
     return make_response(jsonify(similar_movies)), 200
@@ -252,6 +236,7 @@ def get_list():
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
                 "comment": None,
+                "on_watchlist": True
             }
             watch_list_output.append(watch_list_item)
 
@@ -319,6 +304,7 @@ def add_to_list():
     movie_title = request.json["movie_title"]
     movie_image = request.json["movie_image"]
     rating = request.json["rating"]
+    status = request.json["status"]
 
     movie_id_ref = (
         db.reference("/")
@@ -341,6 +327,16 @@ def add_to_list():
         # Send user to view their own watchlist
         return make_response(jsonify({"message": "add successful"})), 200
     else:
+        print(status)
+        # movie_id_ref.set({})
+        movie_id_ref.set(
+            {
+                "status": status,
+                "movie_title": movie_title,
+                "movie_image": movie_image,
+                "rating": rating,
+            }
+        )
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
