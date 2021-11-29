@@ -3,7 +3,7 @@ import unittest
 
 # pylint: disable=E0401
 from get_movie import get_genres, get_similar, get_upcoming, search
-
+# pylint: disable=R0801
 filters = {
     "genre_filter": "",
     "year_filter": None,
