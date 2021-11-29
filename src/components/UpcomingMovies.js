@@ -47,8 +47,9 @@ function UpcomingMovies(props) {
         return <WatchlistPage authToken={authToken} />
     } else {
         return <>
-            <Logout></Logout>
+
             <span className="menu">
+                <Logout></Logout>
                 <span className="switch-search-button-container">
                     <button className="switch-search-button"
                         onClick={() => setSwitchToSearch(true)}>
