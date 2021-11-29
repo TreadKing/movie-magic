@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 function MovieTitle(props) {
     const title = props.title

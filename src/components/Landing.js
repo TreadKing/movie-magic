@@ -1,5 +1,5 @@
 import React from 'react';
-import '../dist/css/style.css'
+// import '../dist/css/style.css'
 import header_illustration_light from '../dist/images/header-illustration-light.svg'
 import header_illustration_dark from '../dist/images/header-illustration-dark.svg'
 import hero_media_illustration_light from '../dist/images/hero-media-illustration-light.svg'
