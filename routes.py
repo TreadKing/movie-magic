@@ -129,11 +129,10 @@ def search_movie():
         "rating_before_after": False,
     }
     user_input = request.json["search_key"]
-    try:
-        genre_filter = request.json["genre"]
-        filters["genre_filter"] = genre_filter
-    except KeyError:
-        pass
+    genre_filter = request.json["genre"]
+    if genre_filter is None:
+        genre_filter = ""
+    filters["genre_filter"] = genre_filter
     try:
         year_filter = request.json["year"]
         year_before_after = request.json["year_before_after"]

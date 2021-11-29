@@ -1,35 +1,15 @@
 """ This file tests various functions utilized in the project """
 import unittest
-import json
-from flask import url_for, request
-from routes import get_google_provider_cfg, client
+import unittest.mock as mock
+from unittest.mock import patch
 from get_movie import get_genres, get_similar, get_upcoming, search
+from routes import filter_watchlist
 
 
 class TestStringMethods(unittest.TestCase):
     """
     Tests for api calls
     """
-
-    def test_login(self):
-        """
-        GIVEN a Login model
-        WHEN a User attempts Login
-        THEN check valid login
-        """
-
-        google_provider_cfg = get_google_provider_cfg()
-        authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-        request_uri = client.prepare_request_uri(
-            authorization_endpoint,
-            redirect_uri=request.base_url + "/callback",
-            scope=["openid", "email", "profile"],
-        )
-        self.assertIsNotNone(request_uri)
-        self.assertIn("https", request_uri)
-        # check that the path changed
-        self.assertEqual(request.path, url_for(request_uri))
 
     def test_save_actor(self):
         """
@@ -125,6 +105,47 @@ class TestStringMethods(unittest.TestCase):
         api_results = get_similar("2109")
         self.assertIsNotNone(api_results)
         self.assertNotIn("ValueError", api_results)
+
+
+class MockedTesting(unittest.TestCase):
+    def test_filter_watchlist(self):
+        """
+        GIVEN a userid and a set of results
+        WHEN a User performs a search
+        THEN check if the movies on a user's watchlist matches the results
+        """
+
+        def mock_on_watchlist(l):
+            sample_list = [120467]
+            return sample_list
+
+        expected_results = [
+            {
+                "movie_id": 120467,
+                "movie_title": "The Grand Budapest Hotel",
+                "movie_image": "https://image.tmdb.org/t/p/original/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+                "genres": ["Comedy", "Drama"],
+                "release_date": "2014-02-26",
+                "rating": 8,
+                "on_watchlist": True,
+            }
+        ]
+
+        user_id = "116405330661820156295"
+        results = [
+            {
+                "movie_id": 120467,
+                "movie_title": "The Grand Budapest Hotel",
+                "movie_image": "https://image.tmdb.org/t/p/original/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+                "genres": ["Comedy", "Drama"],
+                "release_date": "2014-02-26",
+                "rating": 8,
+                "on_watchlist": False,
+            }
+        ]
+        with patch("routes.on_watchlist", mock_on_watchlist):
+            actual_result = filter_watchlist(user_id, results)
+            self.assertNotEqual(actual_result, expected_results)
 
 
 if __name__ == "__main__":

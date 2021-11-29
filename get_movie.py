@@ -223,13 +223,3 @@ def get_similar(movie_id):
         }
         similar_films.append(film)
     return similar_films
-
-
-filters = {
-    "genre_filter": "",
-    "year_filter": None,
-    "year_before_after": False,
-    "rating_filter": None,
-    "rating_before_after": False,
-}
-print(search("Rush Hour", filters))
