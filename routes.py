@@ -15,9 +15,14 @@ from oauthlib.oauth2 import WebApplicationClient
 
 # from requests import api
 from firebase_admin import auth, db
+
+# pylint: disable=E0401
 from app import app
 
+# pylint: disable=E0401
 from auth_token import decode_auth_token
+
+# pylint: disable=E0401
 from get_movie import search, get_upcoming, get_similar
 
 bp = flask.Blueprint("bp", __name__, template_folder="./build")
