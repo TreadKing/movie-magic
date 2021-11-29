@@ -255,6 +255,7 @@ def get_list():
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
                 "comment": None,
+                "on_watchlist": True
             }
             watch_list_output.append(watch_list_item)
 
