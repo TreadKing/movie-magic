@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import makeOptions from '../../api.js';
 
 function WatchlistStatus(props) {
-    const movieId = props.movieId
-    const authToken = props.authToken
+    // const movieId = props.movieId
+    // const authToken = props.authToken
     const [status, setStatus] = useState(props.status)
 
     function addToWatchlist(e) {
@@ -14,7 +14,7 @@ function WatchlistStatus(props) {
         const title = props.title
         const image = props.image
         const rating = props.rating
-        const status = props.status
+        // const status = props.status
 
         // ******* API DOCUMENTATION ******
         // /addToWatchList

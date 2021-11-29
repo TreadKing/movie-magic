@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import MovieSearch from './MovieSearch.js';
 import MovieList from './MovieList.js';
@@ -8,7 +9,7 @@ import Logout from './Logout.js';
 function WatchlistPage(props) {
 
     const [watchlist, setWatchlist] = useState([])
-    const [similarMovies, setSimilarMovies] = useState([])
+    // const [similarMovies, setSimilarMovies] = useState([])
     const [switchToSearch, setSwitchToSearch] = useState(false)
 
     const [switchToUpcoming, setSwitchToUpcoming] = useState(false)

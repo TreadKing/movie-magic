@@ -29,12 +29,13 @@ function Movie(props) {
     const [onWatchlist, setOnWatchlist] = useState(props.onWatchlist)
 
     // message after trying to add a movie to watchlist
-    const [addMessage, setAddMessage] = useState(null)
-    // message after trying to delete a movie from the watchlist
-    const [deleteMessage, setDeleteMessage] = useState(null)
+    // const [addMessage, setAddMessage] = useState(null)
 
-    const [similarMovies, setSimilarMovies] = useState([])
-    const [displaySimilarMovies, setDisplaySimilarMovies] = useState(false)
+    // message after trying to delete a movie from the watchlist
+    // const [deleteMessage, setDeleteMessage] = useState(null)
+
+    // const [similarMovies, setSimilarMovies] = useState([])
+    // const [displaySimilarMovies, setDisplaySimilarMovies] = useState(false)
 
 
     function addToWatchlist() {
@@ -64,7 +65,7 @@ function Movie(props) {
         const options = makeOptions(body)
         fetch('/addToWatchList', options)
             .then(response => response.json())
-            .then(jsonData => setDeleteMessage(jsonData['message']))
+            // .then(jsonData => setDeleteMessage(jsonData['message']))
 
         setOnWatchlist(true)
     }
@@ -86,7 +87,7 @@ function Movie(props) {
         const options = makeOptions(body)
         fetch('/deleteFromWatchList', options)
             .then(response => response.json())
-            .then(jsonData => setDeleteMessage(jsonData['message']))
+            // .then(jsonData => setDeleteMessage(jsonData['message']))
 
         setOnWatchlist(false)
     }

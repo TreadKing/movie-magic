@@ -1,4 +1,25 @@
 import React from 'react';
+// import '../dist/css/style.css'
+import header_illustration_light from '../dist/images/header-illustration-light.svg'
+import header_illustration_dark from '../dist/images/header-illustration-dark.svg'
+import hero_media_illustration_light from '../dist/images/hero-media-illustration-light.svg'
+import hero_media_illustration_dark from '../dist/images/hero-media-illustration-dark.svg'
+import film_light from '../dist/images/film-light.png'
+import film_dark from '../dist/images/film-dark.png'
+import features_illustration_dark from  '../dist/images/features-illustration-dark.svg'
+import popcorn_dark from '../dist/images/popcorn-dark.png'
+import features_illustration_top_dark from '../dist/images/features-illustration-top-dark.svg'
+import features_illustration_light from '../dist/images/features-illustration-light.svg'
+import popcorn_light from '../dist/images/popcorn-light.png'
+import features_illustration_top_light from '../dist/images/features-illustration-top-light.svg'
+import feature_01_light from '../dist/images/feature-01-light.svg'
+import feature_01_dark from '../dist/images/feature-01-dark.svg'
+import feature_02_light from '../dist/images/feature-02-light.svg'
+import feature_02_dark from '../dist/images/feature-02-dark.svg'
+import feature_03_light from '../dist/images/feature-03-light.svg'
+import feature_03_dark from '../dist/images/feature-03-dark.svg'
+import ScriptInjector from '../ScriptInjector';
+
 
 function Landing({ doLogin }) {
     return (
@@ -17,25 +38,31 @@ function Landing({ doLogin }) {
 								been waiting to watch all in one place.</p>
 							<div className="hero-cta">
 								<button className="button button-primary" onClick={doLogin}>Login</button>
+								<div class="lights-toggle">
+									<input id="lights-toggle" type="checkbox" name="lights-toggle" class="switch"
+										checked="checked" />
+									<label for="lights-toggle" class="text-xs"><span>Turn me <span
+												class="label-text">dark</span></span></label>
+								</div>
 							</div>
 						</div>
 						<div className="hero-media">
 							<div className="header-illustration">
 								<img className="header-illustration-image asset-light"
-									src="dist/images/header-illustration-light.svg" alt="Header illustration"/>
+									src={ header_illustration_light } alt="Header illustration light"/>
 								<img className="header-illustration-image asset-dark"
-									src="dist/images/header-illustration-dark.svg" alt="Header illustration"/>
+									src={ header_illustration_dark } alt="Header illustration dark"/>
 							</div>
 							<div className="hero-media-illustration">
 								<img className="hero-media-illustration-image asset-light"
-									src="dist/images/hero-media-illustration-light.svg" alt="Hero media illustration"/>
+									src={ hero_media_illustration_light } alt="Hero media illustration"/>
 								<img className="hero-media-illustration-image asset-dark"
-									src="dist/images/hero-media-illustration-dark.svg" alt="Hero media illustration"/>
+									src={ hero_media_illustration_dark } alt="Hero media illustration"/>
 							</div>
 							<div className="hero-media-container">
-								<img className="hero-media-image asset-light" src="dist/images/film-light.png"
+								<img className="hero-media-image asset-light" src={ film_light }
 									alt="Hero media"/>
-								<img className="hero-media-image asset-dark" src="dist/images/film-dark.png"
+								<img className="hero-media-image asset-dark" src={ film_dark }
 									alt="Hero media"/>
 							</div>
 						</div>
@@ -56,18 +83,18 @@ function Landing({ doLogin }) {
 								</p>
 								<div className="features-image">
 									<img className="features-illustration asset-dark"
-										src="dist/images/features-illustration-dark.svg" alt="Feature illustration" />
-									<img className="features-box asset-dark" src="dist/images/popcorn-dark.png"
+										src={ features_illustration_dark } alt="Feature illustration" />
+									<img className="features-box asset-dark" src={ popcorn_dark }
 										alt="Feature box" />
 									<img className="features-illustration asset-dark"
-										src="dist/images/features-illustration-top-dark.svg"
+										src={ features_illustration_top_dark }
 										alt="Feature illustration top" />
 									<img className="features-illustration asset-light"
-										src="dist/images/features-illustration-light.svg" alt="Feature illustration" />
-									<img className="features-box asset-light" src="dist/images/popcorn-light.png"
+										src={ features_illustration_light } alt="Feature illustration" />
+									<img className="features-box asset-light" src={ popcorn_light }
 										alt="Feature box" />
 									<img className="features-illustration asset-light"
-										src="dist/images/features-illustration-top-light.svg"
+										src={ features_illustration_top_light }
 										alt="Feature illustration top" />
 								</div>
 							</div>
@@ -76,9 +103,9 @@ function Landing({ doLogin }) {
 							<div className="feature is-revealing">
 								<div className="feature-inner">
 									<div className="feature-icon">
-										<img className="asset-light" src="dist/images/feature-01-light.svg"
+										<img className="asset-light" src={ feature_01_light }
 											alt="Feature 01" />
-										<img className="asset-dark" src="dist/images/feature-01-dark.svg" alt="Feature 01" />
+										<img className="asset-dark" src={ feature_01_dark } alt="Feature 01" />
 									</div>
 									<div className="feature-content">
 										<h3 className="feature-title mt-0">Search and Save Movies</h3>
@@ -90,9 +117,9 @@ function Landing({ doLogin }) {
 							<div className="feature is-revealing">
 								<div className="feature-inner">
 									<div className="feature-icon">
-										<img className="asset-light" src="dist/images/feature-02-light.svg"
+										<img className="asset-light" src={ feature_02_light }
 											alt="Feature 02" />
-										<img className="asset-dark" src="dist/images/feature-02-dark.svg" alt="Feature 02" />
+										<img className="asset-dark" src={ feature_02_dark } alt="Feature 02" />
 									</div>
 									<div className="feature-content">
 										<h3 className="feature-title mt-0">Keep up with Friends</h3>
@@ -104,9 +131,9 @@ function Landing({ doLogin }) {
 							<div className="feature is-revealing">
 								<div className="feature-inner">
 									<div className="feature-icon">
-										<img className="asset-light" src="dist/images/feature-03-light.svg"
+										<img className="asset-light" src={ feature_03_light }
 											alt="Feature 03" />
-										<img className="asset-dark" src="dist/images/feature-03-dark.svg" alt="Feature 03" />
+										<img className="asset-dark" src={ feature_03_dark } alt="Feature 03" />
 									</div>
 									<div className="feature-content">
 										<h3 className="feature-title mt-0">Upcoming Releases</h3>
@@ -132,7 +159,7 @@ function Landing({ doLogin }) {
 							<li>Steven Maharath </li>
 							<br />
 							<div className="cta-cta">
-								<a className="button button-primary" href="{{ url_for(bp.login) }}">Login Now</a>
+								<button className="button button-primary" onClick={ doLogin }>Login Now</button>
 							</div>
 						</div>
 					</div>
@@ -150,6 +177,7 @@ function Landing({ doLogin }) {
 			</div>
 		</footer>
 	</div>
+	<ScriptInjector />
 
     </>)
 }
