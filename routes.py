@@ -5,7 +5,6 @@ includes routes
 
 import os
 
-
 from flask.templating import render_template
 
 import requests
@@ -15,15 +14,10 @@ from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
 # from requests import api
-
-from app import app
 from firebase_admin import auth, db
-
-# from models import User
+from app import app
 
 from auth_token import decode_auth_token
-
-
 from get_movie import search, get_upcoming, get_similar
 
 bp = flask.Blueprint("bp", __name__, template_folder="./build")
@@ -58,8 +52,8 @@ def new_login():
 
         else:
             print(f"user {user_id} already exists")
-    except AttributeError:
-        return "An error occured"
+    except AttributeError as error:
+        print(error)
 
 
 @bp.route("/")
@@ -332,8 +326,6 @@ def add_to_list():
 @app.route("/deleteFromWatchList", methods=["POST"])
 def delete_from_list():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    # print("aaa")
-    # print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -343,7 +335,6 @@ def delete_from_list():
         )
 
     movie_id = request.json["movie_id"]
-    # print(movie_id)
     movie_id_ref = (
         db.reference("users").child(user_id).child("watch_list").child(str(movie_id))
     )
@@ -351,52 +342,7 @@ def delete_from_list():
 
     if not movie_id_ref.get():
         return make_response(jsonify({"message": "delete successful"})), 200
-        # return make_response(jsonify({"message": "delete not successful"})), 500
-
-
-@app.route("/addToFriendslist", methods=["POST"])
-def add_friend():
-    """Given a friend id, add an id to a user's friendlist"""
-    auth_token = request.json["auth_token"]
-    user_id = decode_auth_token(auth_token)
-    if user_id == "Invalid token. Please log in again.":
-        return (
-            make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
-        )
-    friend_id = request.json["friend_id"]
-    name = request.json["name"]
-    ref = db.reference("users").child(user_id).child("FriendList")
-    friendlist = ref.get()
-    if not friendlist():
-        friendlist.set(
-            {
-                "id": friend_id,
-                "username": name,
-            }
-        )
-        return make_response(jsonify({"message": "add successful"})), 200
-    else:
-        return make_response(jsonify({"message": "friend already in friendlist"})), 200
-
-
-@app.route("/deleteFromFriendsList", methods=["POST"])
-def delete_friend():
-    """Given a friend id, delete that id from a user's friendlist"""
-    auth_token = request.json["auth_token"]
-    user_id = decode_auth_token(auth_token)
-    if user_id == "Invalid token. Please log in again.":
-        return (
-            make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
-        )
-
-
-#     for key, value in friendlist.items():
-#         if value["friend_id"] == friend_id:
-#         ref.child(key).set({})
-
-#     return make_response(jsonify({"message": "delete sucessful"})), 200
+    return make_response(jsonify({"message": "delete not successful"})), 500
 
 
 @app.route("/getUsers", methods=["POST"])
@@ -412,7 +358,7 @@ def getusers():
 
 
 app.register_blueprint(bp)
-
+# pylint: disable=W1508
 if __name__ == "__main__":
     if os.getenv("PORT"):
         app.run(
