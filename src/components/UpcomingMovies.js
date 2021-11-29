@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import MovieList from './MovieList.js';
 import MovieSearch from './MovieSearch.js';
 import WatchlistPage from './WatchlistPage.js';
-// import upcomingData from '../sample_data/upcomingData.js';
+import Logout from './Logout.js';
 
 function UpcomingMovies(props) {
 
@@ -32,7 +32,7 @@ function UpcomingMovies(props) {
 
         fetch('/getUpcoming')
             .then(response => response.json())
-            // .then(results => setUpcomingMoviesData(results))
+        // .then(results => setUpcomingMoviesData(results))
 
     }
 
@@ -42,6 +42,7 @@ function UpcomingMovies(props) {
         return <WatchlistPage authToken={authToken} />
     } else {
         return <>
+            <Logout></Logout>
             <span className="menu">
                 <span className="switch-search-button-container">
                     <button className="switch-search-button"

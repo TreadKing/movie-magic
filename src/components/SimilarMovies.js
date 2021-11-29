@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MovieList from './MovieList.js';
+import Logout from './Logout.js';
 
 function SimilarMovies(props) {
     const listOfMovies = props.listOfMovies
