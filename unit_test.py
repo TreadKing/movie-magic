@@ -1,9 +1,22 @@
 """ This file tests various functions utilized in the project """
 import unittest
-import json
 from flask import url_for, request
+
+# pylint: disable=E0401
 from routes import get_google_provider_cfg, client
+
+# pylint: disable=E0401
 from get_movie import get_genres, get_similar, get_upcoming, search
+
+# pylint: disable=E0401
+
+filters = {
+    "genre_filter": "",
+    "year_filter": None,
+    "year_before_after": False,
+    "rating_filter": None,
+    "rating_before_after": False,
+}
 
 
 class TestStringMethods(unittest.TestCase):
@@ -38,13 +51,6 @@ class TestStringMethods(unittest.TestCase):
         THEN check movie is added to list
         """
         user_input = "Russell Brand"
-        filters = {
-            "genre_filter": "",
-            "year_filter": None,
-            "year_before_after": False,
-            "rating_filter": None,
-            "rating_before_after": False,
-        }
         api_results = search(user_input, filters)
         self.assertIsNotNone(api_results)
         movie_titles_list = []
@@ -60,13 +66,6 @@ class TestStringMethods(unittest.TestCase):
         THEN check valid movie is added to list or exception thrown if blank
         """
         user_input = ""
-        filters = {
-            "genre_filter": "",
-            "year_filter": None,
-            "year_before_after": False,
-            "rating_filter": None,
-            "rating_before_after": False,
-        }
         movie_text = search(user_input, filters)
         self.assertRaises(Exception, search)
         self.assertIsNone(movie_text)
@@ -85,14 +84,7 @@ class TestStringMethods(unittest.TestCase):
         THEN check valid Search results
         """
         user_input = "Rush Hour"
-        filters = {
-            "genre_filter": "",
-            "year_filter": None,
-            "year_before_after": False,
-            "rating_filter": None,
-            "rating_before_after": False,
-        }
-        result = search(user_input, filter)
+        result = search(user_input, filters)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
