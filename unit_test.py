@@ -1,9 +1,14 @@
 """ This file tests various functions utilized in the project """
 import unittest
-import json
 from flask import url_for, request
+
+# pylint: disable=E0401
 from routes import get_google_provider_cfg, client
+
+# pylint: disable=E0401
 from get_movie import get_genres, get_similar, get_upcoming, search
+
+# pylint: disable=E0401
 
 
 class TestStringMethods(unittest.TestCase):
@@ -92,7 +97,7 @@ class TestStringMethods(unittest.TestCase):
             "rating_filter": None,
             "rating_before_after": False,
         }
-        result = search(user_input, filter)
+        result = search(user_input, filters)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
