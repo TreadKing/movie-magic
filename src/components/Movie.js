@@ -110,7 +110,8 @@ function Movie(props) {
 
         // *** PRODUCTION CODE ***
         const body = {
-            'movie_id': { id }
+            'movie_id': id,
+            'auth_token': authToken
         }
 
         const options = makeOptions(body)
