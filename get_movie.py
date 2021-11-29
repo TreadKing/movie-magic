@@ -41,10 +41,10 @@ def check_genre(genres, target_genre):
 def check_year(target_year, movie_release_year, year_before_after):
     """Checks if a movie release year is greater than or less than the specified year"""
     if year_before_after:
-        if movie_release_year.year < target_year:
+        if int(movie_release_year) < int(target_year):
             return False
     else:
-        if movie_release_year.year > target_year:
+        if int(movie_release_year) > int(target_year):
             return False
     return True
 
@@ -92,7 +92,7 @@ def search_movie(query, filters):
                 ):
                     continue
             if filters["year_filter"] is not None:
-                release_year = datetime.strptime(release_date, "%Y-%m-%d")
+                release_year = release_date[:4]
                 if not check_year(
                     release_year,
                     filters["year_filter"],
@@ -145,7 +145,7 @@ def search_actor(query, filters):
                     ):
                         continue
                 if filters["year_filter"] is not None:
-                    release_year = datetime.strptime(release_date, "%Y-%m-%d")
+                    release_year = release_date[:4]
                     year_to_look_for = filters["year_filter"]
                     if not check_year(
                         filters["year_filter"], release_year, year_to_look_for
