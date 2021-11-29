@@ -25,6 +25,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint
         pip install requests
+        pip install dotenv
     - name: Analysing the code with pylint
       run: |
         pylint unit_test.py
