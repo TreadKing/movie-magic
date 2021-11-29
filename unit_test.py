@@ -2,12 +2,6 @@
 import unittest
 
 # pylint: disable=E0401
-from flask import url_for, request
-
-# pylint: disable=E0401
-from routes import get_google_provider_cfg, client
-
-# pylint: disable=E0401
 from get_movie import get_genres, get_similar, get_upcoming, search
 
 filters = {
@@ -23,26 +17,6 @@ class TestStringMethods(unittest.TestCase):
     """
     Tests for api calls
     """
-
-    def test_login(self):
-        """
-        GIVEN a Login model
-        WHEN a User attempts Login
-        THEN check valid login
-        """
-
-        google_provider_cfg = get_google_provider_cfg()
-        authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-        request_uri = client.prepare_request_uri(
-            authorization_endpoint,
-            redirect_uri=request.base_url + "/callback",
-            scope=["openid", "email", "profile"],
-        )
-        self.assertIsNotNone(request_uri)
-        self.assertIn("https", request_uri)
-        # check that the path changed
-        self.assertEqual(request.path, url_for(request_uri))
 
     def test_save_actor(self):
         """
