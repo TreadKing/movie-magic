@@ -426,6 +426,11 @@ def getusers():
         users_list.append(user)
     return users_list
 
+@app.route("/dist/js/<path:path>")
+def get_js(path):
+    print(path)
+    return flask.send_file(f'./build/dist/js/{path}')
+
 
 app.register_blueprint(bp)
 
