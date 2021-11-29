@@ -1,10 +1,12 @@
 """This file contains api functions that are utilized throughout the app"""
-import json
 import os
 import operator
 from datetime import date, datetime
+
+# pylint: disable=E0401
 import requests
 
+# pylint: disable=E0401
 from dotenv import find_dotenv, load_dotenv
 
 
