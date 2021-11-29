@@ -146,7 +146,6 @@ def search_movie():
     try:
         rating_filter = request.json["rating"]
         rating_before_after = request.json["rating_before_after"]
-        print(rating_filter)
         if rating_filter:
             filters["rating_filter"] = int(rating_filter)
         else:
