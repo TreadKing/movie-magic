@@ -3,6 +3,8 @@ import MovieList from './MovieList.js';
 import MovieSearch from './MovieSearch.js';
 import WatchlistPage from './WatchlistPage.js';
 import Logout from './Logout.js';
+import makeOptions from '../api.js';
+// import upcomingData from '../sample_data/upcomingData.js';
 
 function UpcomingMovies(props) {
 
@@ -29,10 +31,13 @@ function UpcomingMovies(props) {
         //      genres
         //      release_date (YYYY-MM-DD)
         //      on_watchlist (Boolean)
-
-        fetch('/getUpcoming')
+        const body = {
+            'auth_token': authToken
+        };
+        const options = makeOptions(body);
+        fetch('/getUpcoming', options)
             .then(response => response.json())
-        // .then(results => setUpcomingMoviesData(results))
+            .then(results => setUpcomingMovies(results));
 
     }
 
