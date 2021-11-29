@@ -9,6 +9,12 @@ function WatchlistStatus(props) {
     function addToWatchlist(e) {
 
         setStatus(e.target.value)
+        const authToken = props.authToken
+        const id = props.id
+        const title = props.title
+        const image = props.image
+        const rating = props.rating
+        const status = props.status
 
         // ******* API DOCUMENTATION ******
         // /addToWatchList
@@ -21,17 +27,19 @@ function WatchlistStatus(props) {
 
         const body = {
             'auth_token': authToken,
-            'status': e.target.value,
-            'movie_id': movieId
+            'movie_id': id,
+            'movie_title': title,
+            'movie_image': image,
+            'movie_rating': rating,
+            'status': 'unwatched'
         }
-        console.log(e.target.value)
 
         const options = makeOptions(body)
         fetch('/addToWatchList', options)
-            // .then(response => response.json())
-            // .then(jsonData => setDeleteMessage(jsonData['message']))
+            .then(response => response.json())
+            .then(jsonData => setDeleteMessage(jsonData['message']))
 
-        // setOnWatchlist(true)
+        setOnWatchlist(true)
     }
 
     if (status === undefined) {
