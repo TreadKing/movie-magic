@@ -24,7 +24,6 @@ from app import app
 
 from auth_token import decode_auth_token
 
-from firebase_admin import db
 from firebase_admin import auth
 
 
@@ -64,7 +63,6 @@ def new_login():
             print(f"user {user_id} already exists")
     except:
         return "An error occured"
-
 
 
 @bp.route("/")
@@ -132,7 +130,7 @@ def search_movie():
         genre_filter = request.json["genre"]
         if not genre_filter:
             filters["genre_filter"] = ""
-        else: 
+        else:
             filters["genre_filter"] = genre_filter
     except KeyError:
         pass
@@ -161,7 +159,6 @@ def search_movie():
         return make_response(jsonify(api_results)), 200
 
     except KeyError as error:
-        print(error)
         return make_response(jsonify({"message": str(error)})), 500
 
 
@@ -184,8 +181,8 @@ def similar():
     try:
         similar_movies = get_similar(movie_id)
 
-    except KeyError as error:
-        print(error)
+    except KeyError:
+        similar_movies = []
 
     return make_response(jsonify(similar_movies)), 200
 
@@ -203,7 +200,6 @@ def upcoming():
         upcoming_results = filter_watchlist(user_id, get_upcoming())
         return make_response(jsonify(upcoming_results)), 200
     except KeyError as error:
-        print(error)
         return make_response(jsonify({"message": str(error)})), 500
 
 
@@ -236,13 +232,12 @@ def get_list():
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
                 "comment": None,
-                "on_watchlist": True
+                "on_watchlist": True,
             }
             watch_list_output.append(watch_list_item)
 
-    except KeyError as error:
+    except KeyError:
         watch_list_output = []
-        print(error)
 
     return make_response(jsonify(watch_list_output)), 200
 
@@ -280,17 +275,14 @@ def get_other_watchlist(friend_id):
             }
             watch_list_output.append(watch_list_item)
 
-    except KeyError as error:
+    except KeyError:
         watch_list_output = []
-        print(error)
-
     return make_response(jsonify(watch_list_output)), 200
 
 
 @app.route("/addToWatchList", methods=["POST"])
 def add_to_list():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
-
 
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
@@ -340,7 +332,6 @@ def add_to_list():
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
 
 
-
 @app.route("/deleteFromWatchList", methods=["POST"])
 def delete_from_list():
     """Find a movie object in the db and delete that entry from the watchlist"""
@@ -364,7 +355,6 @@ def delete_from_list():
     if not movie_id_ref.get():
         return make_response(jsonify({"message": "delete successful"})), 200
         # return make_response(jsonify({"message": "delete not successful"})), 500
-
 
 
 @app.route("/addToFriendslist", methods=["POST"])
@@ -403,9 +393,6 @@ def delete_friend():
             make_response(jsonify({"error": "Invalid token. Please log in again."})),
             500,
         )
-    friend_id = request.json["friend_id"]
-    ref = db.reference("users").child(user_id).child("FriendList")
-    friendlist = ref.get()
 
 
 #     for key, value in friendlist.items():
