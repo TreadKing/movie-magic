@@ -40,14 +40,10 @@ def check_genre(genres, target_genre):
 
 def check_year(target_year, movie_release_year, year_before_after):
     """Checks if a movie release year is greater than or less than the specified year"""
-    # print(movie_release_year)
-    # print(target_year)
-    if year_before_after == 'false':
-        # print('after')
+    if year_before_after == "false":
         if int(movie_release_year) < int(target_year):
             return False
     else:
-        # print('before')
         if int(movie_release_year) > int(target_year):
             return False
     return True
@@ -55,11 +51,8 @@ def check_year(target_year, movie_release_year, year_before_after):
 
 def check_rating(target_rating, movie_rating, rating_to_look_for):
     """Checks if a movie is rated greater than or less than a given rating"""
-    print(rating_to_look_for)
-    if rating_to_look_for == 'false':
+    if rating_to_look_for == "false":
         # We include movies where the rating is above the rating_to_look_for
-        print(movie_rating)
-        print(target_rating)
         if movie_rating < target_rating:
             return False
     else:
@@ -89,7 +82,7 @@ def search_movie(query, filters):
                 rating = request["results"][i]["vote_average"]
             else:
                 rating = 0
-            if filters["genre_filter"] is not "":
+            if filters["genre_filter"] != "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):
                     continue
