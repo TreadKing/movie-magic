@@ -137,26 +137,27 @@ body {
     border-radius: 5px;
   }
   
-  .input-year-container {
+  .input-year-container-2 {
     width: 318px;
   }
   
-  .input-year-label {
+  .input-year-label-2 {
     color: white;
   }
   
-  .year-before-after-input {
+  .year-before-after-input-2 {
     float: right;
     height: 25px;
     background-color: white;
     border-radius: 5px;
+    font-size: 15px;
   }
   
-  .year-input {
+  .year-input-2 {
     float: right;
-    height: 20px;
-    color: red;
+    height: 25px;
     border-radius: 5px;
+    font-size: 15px;
   }
   
   .rating-container {

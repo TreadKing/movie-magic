@@ -158,13 +158,13 @@ function MovieSearch(props) {
                         <option value="Western">Western</option>
                     </select>
                 </p>
-                <p className="input-year-container">
-                    <span className="input-year-label">Year</span>
-                    <select className="year-before-after-input" onChange={yearBeforeAfterOnChange}>
+                <p className="input-year-container-2">
+                    <span className="input-year-label-2">Year</span>
+                    <select className="year-before-after-input-2" onChange={yearBeforeAfterOnChange}>
                         <option value={true}>before</option>
                         <option value={false}>after</option>
                     </select>
-                    <input className="year-input" type="number" onChange={yearOnChange} />
+                    <input className="year-input-2" type="number" onChange={yearOnChange} />
                 </p>
                 <p className="rating-container">
                     <span className="rating-label">Rating</span>

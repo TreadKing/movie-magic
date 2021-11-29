@@ -63,7 +63,7 @@ function UpcomingMovies(props) {
                     </button>
                 </span>
             </span>
-            <MovieList listOfMovies={upcomingMovies} listName="Upcoming Movies" />
+            <MovieList listOfMovies={upcomingMovies} authToken={authToken} listName="Upcoming Movies" />
         </>
     }
 
