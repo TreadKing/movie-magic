@@ -1,17 +1,19 @@
-import jwt
+"""Encodes and decodes an auth token obtained from Google"""
 import os
+import jwt
 from firebase_admin import auth
 
 
 def encode_auth_token(user_id):
+    """Encodes a user's auth token"""
     try:
         payload = {"sub": user_id}
         return jwt.encode(
             payload, os.environ.get("AUTH_SECRET", None), algorithm="HS256"
         )
 
-    except Exception as e:
-        return e
+    except AttributeError as error:
+        return error
 
 
 # def decode_auth_token(auth_token):
@@ -28,6 +30,7 @@ def encode_auth_token(user_id):
 
 
 def decode_auth_token(auth_token):
+    """Decodes auth token"""
     try:
         id_token = auth_token
         decoded_token = auth.verify_id_token(id_token)
@@ -36,5 +39,5 @@ def decode_auth_token(auth_token):
 
         return uid
 
-    except:
+    except AttributeError:
         return "Invalid token. Please log in again."
