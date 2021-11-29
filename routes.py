@@ -3,28 +3,25 @@ main backend for flask server.
 includes routes
 """
 
-from logging import error
 import os
 
 
-import random
 from flask.templating import render_template
 
 import requests
 import flask
-from flask import request, redirect, make_response, url_for
+from flask import request, make_response
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
 # from requests import api
-from firebase_admin import db
+
 from app import app
+from firebase_admin import auth, db
 
 # from models import User
 
 from auth_token import decode_auth_token
-
-from firebase_admin import auth
 
 
 from get_movie import search, get_upcoming, get_similar
@@ -61,7 +58,7 @@ def new_login():
 
         else:
             print(f"user {user_id} already exists")
-    except:
+    except AttributeError:
         return "An error occured"
 
 
@@ -317,7 +314,6 @@ def add_to_list():
         )
 
         # Send user to view their own watchlist
-        return make_response(jsonify({"message": "add successful"})), 200
     else:
         print(status)
         # movie_id_ref.set({})
@@ -330,6 +326,7 @@ def add_to_list():
             }
         )
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
+    return make_response(jsonify({"message": "add successful"})), 200
 
 
 @app.route("/deleteFromWatchList", methods=["POST"])
