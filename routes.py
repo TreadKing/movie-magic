@@ -363,6 +363,7 @@ def getusers():
 
 @app.route("/dist/js/<path:path>")
 def get_js(path):
+    """Sends file to load the landing page"""
     print(path)
     return flask.send_file(f'./build/dist/js/{path}')
 
