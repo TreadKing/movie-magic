@@ -75,15 +75,18 @@ def search_movie(query, filters):
             # Split out the movie info and perform try excepts to
             # prevent errors if there is no rating or image link
             genres = get_genres(request["results"][i]["id"])
-            release_date = request["results"][i]["release_date"]
+            rating = 0
+            image_link = ""
+            try:
+                release_date = request["results"][i]["release_date"]
+            except KeyError:
+                release_date = "None"
             if request["results"][i]["poster_path"] is not None:
                 image_link = request["results"][i]["poster_path"]
-            else:
-                image_link = ""
+
             if request["results"][i]["vote_average"] is not None:
                 rating = request["results"][i]["vote_average"]
-            else:
-                rating = 0
+
             if filters["genre_filter"] != "":
                 genre_to_look_for = filters["genre_filter"]
                 if not check_genre(genres, genre_to_look_for):

@@ -122,6 +122,7 @@ def search_movie():
         "rating_before_after": False,
     }
     user_input = request.json["search_key"]
+
     try:
         genre_filter = request.json["genre"]
         if not genre_filter:
