@@ -1,6 +1,6 @@
 """ This file tests various functions utilized in the project """
 import unittest
-import unittest.mock as mock
+import unittest.mock
 from unittest.mock import patch
 from get_movie import get_genres, get_similar, get_upcoming, search
 from routes import filter_watchlist
@@ -97,7 +97,10 @@ class MockedTesting(unittest.TestCase):
         is already on the watchlist
         """
 
-        def mock_on_watchlist(l):
+        def mock_on_watchlist():
+            """Mocks the on_watchlist function that will
+            instead return a list containing a movie id
+            expected to be in the results"""
             sample_list = ["120467"]
             return sample_list
 
@@ -164,10 +167,10 @@ class MockedTesting(unittest.TestCase):
             },
         ]
 
-        def mock_search_movie(l, s):
+        def mock_search_movie():
             return []
 
-        def mock_search_actor(l, s):
+        def mock_search_actor():
             return []
 
         with patch("get_movie.search_movie", mock_search_movie):
