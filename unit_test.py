@@ -14,7 +14,7 @@ test_filters = {
     "rating_filter": None,
     "rating_before_after": False,
 }
-
+IMAGE_LINK = "https://image.tmdb.org/t/p/original/"
 
 class TestStringMethods(unittest.TestCase):
     """
@@ -53,7 +53,6 @@ class TestStringMethods(unittest.TestCase):
         for movie in movie_text:
             movie_titles.append(movie["movie_title"])
         self.assertIn("Rush Hour", movie_titles)
-
 
     def test_search(self):
         """
@@ -98,6 +97,8 @@ class TestStringMethods(unittest.TestCase):
 
 
 class MockedTesting(unittest.TestCase):
+    """Tests mocked responses for filter_watchlist"""
+
     def test_filter_watchlist(self):
         """
         Checks if the function filter_watchlist will correctly
@@ -116,7 +117,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 120467,
                 "movie_title": "The Grand Budapest Hotel",
-                "movie_image": "https://image.tmdb.org/t/p/original/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+                "movie_image": IMAGE_LINK+"eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
                 "genres": ["Comedy", "Drama"],
                 "release_date": "2014-02-26",
                 "rating": 8,
@@ -129,7 +130,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 120467,
                 "movie_title": "The Grand Budapest Hotel",
-                "movie_image": "https://image.tmdb.org/t/p/original/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+                "movie_image": IMAGE_LINK+"eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
                 "genres": ["Comedy", "Drama"],
                 "release_date": "2014-02-26",
                 "rating": 8,
@@ -142,9 +143,10 @@ class MockedTesting(unittest.TestCase):
 
     def test_search(self):
         """
-        GIVEN a movie title
-        WHEN a User attempts Search
-        THEN check valid Search results
+        Tests the search function which calls
+        search_actor and search_movie. The first test
+        mocks out search_movie and the second mocks
+        out search_actor to test each function individually.
         """
         user_input = "Russel Brand"
         filters = {
@@ -158,7 +160,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 20352,
                 "movie_title": "Despicable Me",
-                "movie_image": "https://image.tmdb.org/t/p/original/fb9zF01GKOkNziYVusg20laWsGh.jpg",
+                "movie_image": IMAGE_LINK+"fb9zF01GKOkNziYVusg20laWsGh.jpg",
                 "genres": ["Family", "Animation", "Comedy"],
                 "release_date": "2010-07-08",
                 "rating": 7.2,
@@ -167,7 +169,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 93456,
                 "movie_title": "Despicable Me 2",
-                "movie_image": "https://image.tmdb.org/t/p/original/5Fh4NdoEnCjCK9wLjdJ9DJNFl2b.jpg",
+                "movie_image": IMAGE_LINK+"original/5Fh4NdoEnCjCK9wLjdJ9DJNFl2b.jpg",
                 "genres": ["Animation", "Comedy", "Family"],
                 "release_date": "2013-06-26",
                 "rating": 6.9,
@@ -190,7 +192,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 162,
                 "movie_title": "Edward Scissorhands",
-                "movie_image": "https://image.tmdb.org/t/p/original/1RFIbuW9Z3eN9Oxw2KaQG5DfLmD.jpg",
+                "movie_image": IMAGE_LINK+"1RFIbuW9Z3eN9Oxw2KaQG5DfLmD.jpg",
                 "genres": ["Fantasy", "Drama", "Romance"],
                 "release_date": "1990-12-05",
                 "rating": 7.7,
@@ -199,7 +201,7 @@ class MockedTesting(unittest.TestCase):
             {
                 "movie_id": 683841,
                 "movie_title": "The Making of Edward Scissorhands",
-                "movie_image": "https://image.tmdb.org/t/p/original/pNllsZFsXiLAerWVQAY47RXjj4N.jpg",
+                "movie_image": IMAGE_LINK+"pNllsZFsXiLAerWVQAY47RXjj4N.jpg",
                 "genres": ["Documentary", "Drama", "Fantasy"],
                 "release_date": "1990-12-14",
                 "rating": 7.8,
