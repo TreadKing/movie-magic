@@ -12,7 +12,7 @@ function MovieSearch(props) {
 
     // Collect props (just need user information...their id and name)
     const authToken = props.authToken
-    const username = props.username
+    // const username = props.username
 
     // This is the search input
     const [searchKey, setSearchKey] = useState('')

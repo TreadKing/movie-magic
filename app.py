@@ -1,8 +1,8 @@
 """
 handles enviroment variable, flask app, and db initial setup
 """
-import firebase_admin
 import os
+import firebase_admin
 
 import flask
 from dotenv import load_dotenv, find_dotenv

@@ -1,10 +1,12 @@
 """This file contains api functions that are utilized throughout the app"""
-import json
 import os
 import operator
 from datetime import date, datetime
+
+# pylint: disable=E0401
 import requests
 
+# pylint: disable=E0401
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -40,14 +42,10 @@ def check_genre(genres, target_genre):
 
 def check_year(target_year, movie_release_year, year_before_after):
     """Checks if a movie release year is greater than or less than the specified year"""
-    # print(movie_release_year)
-    # print(target_year)
-    if year_before_after == 'false':
-        # print('after')
+    if year_before_after == "false":
         if int(movie_release_year) < int(target_year):
             return False
     else:
-        # print('before')
         if int(movie_release_year) > int(target_year):
             return False
     return True
@@ -55,11 +53,8 @@ def check_year(target_year, movie_release_year, year_before_after):
 
 def check_rating(target_rating, movie_rating, rating_to_look_for):
     """Checks if a movie is rated greater than or less than a given rating"""
-    print(rating_to_look_for)
-    if rating_to_look_for == 'false':
+    if rating_to_look_for == "false":
         # We include movies where the rating is above the rating_to_look_for
-        print(movie_rating)
-        print(target_rating)
         if movie_rating < target_rating:
             return False
     else:

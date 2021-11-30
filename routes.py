@@ -3,31 +3,26 @@ main backend for flask server.
 includes routes
 """
 
-from logging import error
 import os
 
-
-import random
 from flask.templating import render_template
 
 import requests
 import flask
-from flask import request, redirect, make_response, url_for
+from flask import request, make_response
 from flask.json import jsonify
 from oauthlib.oauth2 import WebApplicationClient
 
 # from requests import api
-from firebase_admin import db
+from firebase_admin import auth, db
+
+# pylint: disable=E0401
 from app import app
 
-# from models import User
-
+# pylint: disable=E0401
 from auth_token import decode_auth_token
 
-from firebase_admin import db
-from firebase_admin import auth
-
-
+# pylint: disable=E0401
 from get_movie import search, get_upcoming, get_similar
 
 bp = flask.Blueprint("bp", __name__, template_folder="./build")
@@ -62,9 +57,8 @@ def new_login():
 
         else:
             print(f"user {user_id} already exists")
-    except:
-        return "An error occured"
-
+    except AttributeError as error:
+        print(error)
 
 
 @bp.route("/")
@@ -133,7 +127,7 @@ def search_movie():
         genre_filter = request.json["genre"]
         if not genre_filter:
             filters["genre_filter"] = ""
-        else: 
+        else:
             filters["genre_filter"] = genre_filter
     except KeyError:
         pass
@@ -162,7 +156,6 @@ def search_movie():
         return make_response(jsonify(api_results)), 200
 
     except KeyError as error:
-        print(error)
         return make_response(jsonify({"message": str(error)})), 500
 
 
@@ -185,8 +178,8 @@ def similar():
     try:
         similar_movies = get_similar(movie_id)
 
-    except KeyError as error:
-        print(error)
+    except KeyError:
+        similar_movies = []
 
     return make_response(jsonify(similar_movies)), 200
 
@@ -204,7 +197,6 @@ def upcoming():
         upcoming_results = filter_watchlist(user_id, get_upcoming())
         return make_response(jsonify(upcoming_results)), 200
     except KeyError as error:
-        print(error)
         return make_response(jsonify({"message": str(error)})), 500
 
 
@@ -237,13 +229,12 @@ def get_list():
                 "rating": watch_list[key]["rating"],
                 "status": watch_list[key]["status"],
                 "comment": None,
-                "on_watchlist": True
+                "on_watchlist": True,
             }
             watch_list_output.append(watch_list_item)
 
-    except KeyError as error:
+    except KeyError:
         watch_list_output = []
-        print(error)
 
     return make_response(jsonify(watch_list_output)), 200
 
@@ -281,17 +272,14 @@ def get_other_watchlist(friend_id):
             }
             watch_list_output.append(watch_list_item)
 
-    except KeyError as error:
+    except KeyError:
         watch_list_output = []
-        print(error)
-
     return make_response(jsonify(watch_list_output)), 200
 
 
 @app.route("/addToWatchList", methods=["POST"])
 def add_to_list():
     """After adding to the watchlist, send the user to the watchlist to see their change"""
-
 
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
@@ -326,7 +314,6 @@ def add_to_list():
         )
 
         # Send user to view their own watchlist
-        return make_response(jsonify({"message": "add successful"})), 200
     else:
         print(status)
         # movie_id_ref.set({})
@@ -339,14 +326,12 @@ def add_to_list():
             }
         )
         return make_response(jsonify({"message": "movie already in watchlist"})), 200
-
+    return make_response(jsonify({"message": "add successful"})), 200
 
 
 @app.route("/deleteFromWatchList", methods=["POST"])
 def delete_from_list():
     """Find a movie object in the db and delete that entry from the watchlist"""
-    # print("aaa")
-    # print(request.json)
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
     if user_id == "Invalid token. Please log in again.":
@@ -356,7 +341,6 @@ def delete_from_list():
         )
 
     movie_id = request.json["movie_id"]
-    # print(movie_id)
     movie_id_ref = (
         db.reference("users").child(user_id).child("watch_list").child(str(movie_id))
     )
@@ -364,56 +348,7 @@ def delete_from_list():
 
     if not movie_id_ref.get():
         return make_response(jsonify({"message": "delete successful"})), 200
-        # return make_response(jsonify({"message": "delete not successful"})), 500
-
-
-
-@app.route("/addToFriendslist", methods=["POST"])
-def add_friend():
-    """Given a friend id, add an id to a user's friendlist"""
-    auth_token = request.json["auth_token"]
-    user_id = decode_auth_token(auth_token)
-    if user_id == "Invalid token. Please log in again.":
-        return (
-            make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
-        )
-    friend_id = request.json["friend_id"]
-    name = request.json["name"]
-    ref = db.reference("users").child(user_id).child("FriendList")
-    friendlist = ref.get()
-    if not friendlist():
-        friendlist.set(
-            {
-                "id": friend_id,
-                "username": name,
-            }
-        )
-        return make_response(jsonify({"message": "add successful"})), 200
-    else:
-        return make_response(jsonify({"message": "friend already in friendlist"})), 200
-
-
-@app.route("/deleteFromFriendsList", methods=["POST"])
-def delete_friend():
-    """Given a friend id, delete that id from a user's friendlist"""
-    auth_token = request.json["auth_token"]
-    user_id = decode_auth_token(auth_token)
-    if user_id == "Invalid token. Please log in again.":
-        return (
-            make_response(jsonify({"error": "Invalid token. Please log in again."})),
-            500,
-        )
-    friend_id = request.json["friend_id"]
-    ref = db.reference("users").child(user_id).child("FriendList")
-    friendlist = ref.get()
-
-
-#     for key, value in friendlist.items():
-#         if value["friend_id"] == friend_id:
-#         ref.child(key).set({})
-
-#     return make_response(jsonify({"message": "delete sucessful"})), 200
+    return make_response(jsonify({"message": "delete not successful"})), 500
 
 
 @app.route("/getUsers", methods=["POST"])
@@ -429,7 +364,7 @@ def getusers():
 
 
 app.register_blueprint(bp)
-
+# pylint: disable=W1508
 if __name__ == "__main__":
     if os.getenv("PORT"):
         app.run(
