@@ -21,5 +21,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint -d R0801 unit_test.py
-        pylint `ls -R|grep .py$|xargs`
+        pylint -d R0801 `ls -R|grep .py$|xargs`
