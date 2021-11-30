@@ -1,6 +1,6 @@
 import './App.css';
 import Login from './components/Login';
-import MovieSearch from './components/MovieSearch.js';
+// import MovieSearch from './components/MovieSearch.js';
 
 
 function App() {
