@@ -160,7 +160,7 @@ def search_actor(query, filters):
                     "movie_title": request["results"][0]["known_for"][i][
                         "original_title"
                     ],
-                    "movie_image": POSTER_URL + image_link,
+                    "movie_image": POSTER_URL + str(image_link),
                     "genres": genres,
                     "release_date": release_date,
                     "rating": rating,
@@ -198,6 +198,7 @@ def get_upcoming():
                 "movie_image": POSTER_URL + request["results"][i]["poster_path"],
                 "genres": get_genres(request["results"][i]["id"]),
                 "release_date": request["results"][i]["release_date"],
+                "rating": 0,
                 "on_watchlist": False,
             }
             movie_list.append(film)
