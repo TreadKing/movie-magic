@@ -101,7 +101,11 @@ To get started with this project, simply follow the steps below. It is assumed o
 
 1. <del>Currently our app does not work on Heroku. We think this is because we have included Google Authentication to our project which is crashing Heroku. Our app does run locally though. As such we have not implemented Continous Deployment. </del> As of the latest release, this bug has been resolved.
 
-
+## Linting
+1. E0401 (Import error)
+Disabled because pylint was not correctly detecting import files even though the code was able to import files to run
+2. W1508 (Invalid envvar default)
+Disabled because the int 8080 was present in os.getenv. The number was needed to host the app. 
 
 
 <!-- DEVELOPERS -->
