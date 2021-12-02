@@ -5,6 +5,7 @@ import Logout from './Logout.js';
 function SimilarMovies(props) {
     const listOfMovies = props.listOfMovies
     const title = props.title
+    const authToken = props.authToken
 
     return <>
         <span
@@ -12,7 +13,7 @@ function SimilarMovies(props) {
         >
             Similar movies for: {title}
         </span>
-        <MovieList listOfMovies={listOfMovies} />
+        <MovieList listOfMovies={listOfMovies} authToken={authToken} />
     </>
 
 

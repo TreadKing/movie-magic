@@ -49,7 +49,7 @@ function MovieList(props) {
     }
 
     if (displaySimilarMovies) {
-        return <MovieList listOfMovies={similarMovies} />
+        return <MovieList listOfMovies={similarMovies} authToken={authToken} />
     } else {
         return <>
             <h1>{props.listName}</h1>
