@@ -42,6 +42,8 @@ def check_genre(genres, target_genre):
 
 def check_year(target_year, movie_release_year, year_before_after):
     """Checks if a movie release year is greater than or less than the specified year"""
+    if movie_release_year == "":
+        return False
     if year_before_after == "false":
         if int(movie_release_year) < int(target_year):
             return False
