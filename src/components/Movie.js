@@ -151,7 +151,7 @@ function Movie(props) {
       <Rating rating={rating} />
       <Genres genres={genres} />
       {/* <WatchlistStatus status={status} /> */}
-      <ReleaseDate date={releaseDate} />
+      <ReleaseDate releaseDate={releaseDate} />
       <Comment comment={comment} />
       <SimilarMoviesButton getSimilarMovies={getSimilarMovies} />
     </div>

@@ -218,6 +218,14 @@ body {
   .movie-title-empty {
   
   }
+
+  .movie-release-date-container {
+    display: block;
+  }
+
+  .movie-release-date {
+
+  }
   
   .movie-image-container {
     display: block;

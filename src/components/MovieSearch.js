@@ -118,7 +118,7 @@ function MovieSearch(props) {
         </span>
         <span className="upcoming-movies-button-container">
           <button
-            onClick={function set() { setSwitchToUpcoming(true); }}
+            onClick={() => setSwitchToUpcoming(true)}
             className="upcoming-movies-button"
             type="button"
           >
