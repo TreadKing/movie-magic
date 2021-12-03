@@ -66,19 +66,10 @@ function Login() {
           };
 
           fetch('/login', options).then(() => {
-            console.log('you logged in!');
-          }).catch((error) => {
-            console.log(error);
+          }).catch(() => {
           });
-        }).catch((error) => {
-          // Handle Errors here.
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-        })).catch((error) => {
-        // Handle Errors here.
-        console.log(error);
+        }).catch(() => {
+        })).catch(() => {
       });
   }
 
