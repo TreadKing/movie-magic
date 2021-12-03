@@ -172,8 +172,6 @@ def search_actor(query, filters):
                     "on_watchlist": False,
                 }
                 film_list.append(film)
-    # print(film_list)
-    # print('')
     return film_list
 
 
