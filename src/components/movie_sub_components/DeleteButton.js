@@ -1,21 +1,30 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function DeleteButton(props) {
+  const { deleteFromWatchlist } = props;
+  const { onWatchlist } = props;
 
-    const _delete = props.delete
-    const onWatchlist = props.onWatchlist
-
-    if (_delete !== undefined) {
-        return <span className="movie-delete-button-container">
-            <button className="movie-delete-button"
-                onClick={_delete}
-                disabled={!onWatchlist}>
-                -
-            </button>
-        </span>
-    } else {
-        return <span className="movie-delete-button-empty"></span>
-    }
+  if (deleteFromWatchlist !== undefined) {
+    return (
+      <span className="movie-delete-button-container">
+        <button
+          className="movie-delete-button"
+          onClick={deleteFromWatchlist}
+          disabled={!onWatchlist}
+          type="button"
+        >
+          -
+        </button>
+      </span>
+    );
+  }
+  return <span className="movie-delete-button-empty" />;
 }
+
+DeleteButton.propTypes = {
+  deleteFromWatchlist: PropTypes.func.isRequired,
+  onWatchlist: PropTypes.any.isRequired,
+};
 
 export default DeleteButton;

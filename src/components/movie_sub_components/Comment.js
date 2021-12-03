@@ -1,18 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Comment(props) {
+  const { comment } = props;
 
-    const comment = props.comment
-
-    if (comment !== undefined) {
-        return <span className="movie-comment-container">
-            <span className="movie-comment">
-                {comment}
-            </span>
+  if (comment !== undefined) {
+    return (
+      <span className="movie-comment-container">
+        <span className="movie-comment">
+          {comment}
         </span>
-    } else {
-        return <span className="movie-comment-empty"></span>
-    }
+      </span>
+    );
+  }
+  return <span className="movie-comment-empty" />;
 }
+
+Comment.propTypes = {
+  comment: PropTypes.string.isRequired,
+};
 
 export default Comment;

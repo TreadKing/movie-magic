@@ -1,17 +1,22 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Rating(props) {
+  const { rating } = props;
 
-    const rating = props.rating
-
-    if (rating !== undefined) {
-        return <span className="movie-rating-container">
-            <span className="movie-rating-label">Rating (out of ten) </span>
-            <span className="movie-rating">{rating}</span>
-        </span >
-    } else {
-        return <span className="movie-rating-empty"></span>
-    }
+  if (rating !== undefined) {
+    return (
+      <span className="movie-rating-container">
+        <span className="movie-rating-label">Rating (out of ten) </span>
+        <span className="movie-rating">{rating}</span>
+      </span>
+    );
+  }
+  return <span className="movie-rating-empty" />;
 }
+
+Rating.propTypes = {
+  rating: PropTypes.string.isRequired,
+};
 
 export default Rating;
