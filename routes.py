@@ -54,11 +54,12 @@ def new_login():
         if not users_ref.get():
             print(f"new user: {user_id}")
             users_ref.set({"name": username})
+            return make_response(jsonify({"message": "new user added"})), 200
 
-        else:
-            msg = f"user {user_id} already exists"
-            print(msg)
-            return make_response(jsonify({"message": msg})), 500
+        msg = f"user {user_id} already exists"
+        print(msg)
+        return make_response(jsonify({"message": msg})), 200
+
     except AttributeError as error:
         print(error)
         return make_response(jsonify({"message": str(error)})), 500
@@ -373,7 +374,6 @@ if __name__ == "__main__":
         app.run(
             host=os.getenv("IP", "0.0.0.0"),
             port=int(os.getenv("PORT", 8080)),
-            debug=True,
         )
     else:
         app.run(debug=True)
