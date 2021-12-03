@@ -154,9 +154,10 @@ def search_actor(query, filters):
                         continue
                 if filters["year_filter"] is not None:
                     release_year = release_date[:4]
-                    year_to_look_for = filters["year_filter"]
                     if check_year(
-                        filters["year_filter"], release_year, year_to_look_for
+                        release_year,
+                        filters["year_filter"],
+                        filters["year_before_after"],
                     ):
                         continue
                 film = {
@@ -183,7 +184,7 @@ def search(query, filters):
         return None
     film_by_actor = search_actor(query, filters)
     film_by_name = search_movie(query, filters)
-    film_list = film_by_actor + film_by_name
+    film_list =  film_by_name + film_by_actor
     return film_list
 
 
