@@ -57,10 +57,10 @@ def new_login():
 
         else:
             print(f"user {user_id} already exists")
-            return f"user {user_id} already exists"
+            return f"user {user_id} already exists", 200
     except AttributeError as error:
         print(error)
-        return error
+        return error, 200
 
 
 @bp.route("/")
