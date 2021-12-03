@@ -56,11 +56,12 @@ def new_login():
             users_ref.set({"name": username})
 
         else:
-            print(f"user {user_id} already exists")
-            return f"user {user_id} already exists", 200
+            msg = f"user {user_id} already exists"
+            print(msg)
+            return make_response(jsonify({"message": msg})), 500
     except AttributeError as error:
         print(error)
-        return error, 200
+        return make_response(jsonify({"message": str(error)})), 500
 
 
 @bp.route("/")
