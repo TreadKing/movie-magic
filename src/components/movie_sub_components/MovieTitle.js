@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function MovieTitle(props) {
   const { title } = props;
@@ -15,8 +16,8 @@ function MovieTitle(props) {
   return <span className="movie-title-empty" />;
 }
 
-MovieTitle.prototype = {
-    
-}
+MovieTitle.propTypes = {
+  title: PropTypes.string.isRequired,
+};
 
 export default MovieTitle;

@@ -1,66 +1,74 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import MovieSearch from './MovieSearch.js';
-import MovieList from './MovieList.js';
-import UpcomingMovies from './UpcomingMovies.js';
-import makeOptions from '../api.js';
-import Logout from './Logout.js';
+import PropTypes from 'prop-types';
+import MovieSearch from './MovieSearch';
+import MovieList from './MovieList';
+import UpcomingMovies from './UpcomingMovies';
+import makeOptions from '../api';
+import Logout from './Logout';
 
 function WatchlistPage(props) {
+  const [watchlist, setWatchlist] = useState([]);
+  // const [similarMovies, setSimilarMovies] = useState([])
+  const [switchToSearch, setSwitchToSearch] = useState(false);
 
-    const [watchlist, setWatchlist] = useState([])
-    // const [similarMovies, setSimilarMovies] = useState([])
-    const [switchToSearch, setSwitchToSearch] = useState(false)
+  const [switchToUpcoming, setSwitchToUpcoming] = useState(false);
 
-    const [switchToUpcoming, setSwitchToUpcoming] = useState(false)
+  const { authToken } = props;
 
-    const authToken = props.authToken
+  // eslint-disable-next-line no-use-before-define
+  useEffect(getWatchlist, []);
 
-    useEffect(getWatchlist, [])
+  function getWatchlist() {
+    // setWatchlist(watchlistData)
 
-    function getWatchlist() {
+    const body = { auth_token: authToken };
 
-        // setWatchlist(watchlistData)
+    const options = makeOptions(body);
+    fetch('/getWatchList', options)
+      .then((response) => response.json())
+      .then((searchResult) => setWatchlist(searchResult));
+  }
 
-        const body = { 'auth_token': authToken }
+  if (switchToSearch) {
+    return <MovieSearch authToken={authToken} />;
+  } if (switchToUpcoming) {
+    return <UpcomingMovies authToken={authToken} />;
+  }
+  return (
+    <>
 
-        const options = makeOptions(body)
-
-        fetch('/getWatchList', options)
-            .then(response => response.json())
-            .then(searchResult => setWatchlist(searchResult))
-    }
-
-    if (switchToSearch) {
-        return <MovieSearch authToken={authToken}></MovieSearch>
-    } else if (switchToUpcoming) {
-        return <UpcomingMovies authToken={authToken} />
-    } else {
-        return <>
-
-            <span className="menu">
-                <Logout></Logout>
-                <span className="switch-search-button-container">
-                    <button className="switch-search-button"
-                        onClick={() => setSwitchToSearch(true)}>
-                        Search
-                </button>
-                </span>
-                <span className="upcoming-movies-button-container">
-                    <button onClick={() => setSwitchToUpcoming(true)}
-                        className="upcoming-movies-button">
-                        Upcoming
-                </button>
-                </span>
-            </span>
-            <MovieList
-                listName="Your Watchlist"
-                authToken={authToken}
-                listOfMovies={watchlist}
-            />
-        </>
-    }
-
+      <span className="menu">
+        <Logout />
+        <span className="switch-search-button-container">
+          <button
+            className="switch-search-button"
+            onClick={() => setSwitchToSearch(true)}
+            type="button"
+          >
+            Search
+          </button>
+        </span>
+        <span className="upcoming-movies-button-container">
+          <button
+            onClick={() => setSwitchToUpcoming(true)}
+            className="upcoming-movies-button"
+            type="button"
+          >
+            Upcoming
+          </button>
+        </span>
+      </span>
+      <MovieList
+        listName="Your Watchlist"
+        authToken={authToken}
+        listOfMovies={watchlist}
+      />
+    </>
+  );
 }
+
+WatchlistPage.propTypes = {
+  authToken: PropTypes.string.isRequired,
+};
 
 export default WatchlistPage;

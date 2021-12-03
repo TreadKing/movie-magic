@@ -1,18 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Genres(props) {
+  const { genres } = props;
 
-    const genres = props.genres
-
-    if (genres !== undefined) {
-        return <span className="movie-genres-container">
-            <span className="movie-genres">
-                {genres.join(' ')}
-            </span>
+  if (genres !== undefined) {
+    return (
+      <span className="movie-genres-container">
+        <span className="movie-genres">
+          {genres.join(' ')}
         </span>
-    } else {
-        return <span className="movie-delete-button-empty"></span>
-    }
+      </span>
+    );
+  }
+  return <span className="movie-delete-button-empty" />;
 }
+
+Genres.propTypes = {
+  genres: PropTypes.string.isRequired,
+};
 
 export default Genres;

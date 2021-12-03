@@ -12,7 +12,7 @@ import ScriptInjector from '../ScriptInjector';
 function Landing({ doLogin }) {
   return (
     <>
-      <div classNameName="body-wrap boxed-container">
+      <div className="body-wrap boxed-container">
         <header className="site-header" />
 
         <main>
