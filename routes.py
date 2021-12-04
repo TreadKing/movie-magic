@@ -77,6 +77,9 @@ def on_watchlist(user_id):
     ref = db.reference("users").child(user_id).child("watch_list")
     watchlist = ref.get()
 
+    if not watchlist:
+        return user_watchlist
+
     for key in watchlist.items():
         user_watchlist.append(key[0])
 
@@ -237,7 +240,7 @@ def get_list():
             }
             watch_list_output.append(watch_list_item)
 
-    except KeyError:
+    except:
         watch_list_output = []
 
     return make_response(jsonify(watch_list_output)), 200
