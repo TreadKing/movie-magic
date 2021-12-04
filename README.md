@@ -53,7 +53,7 @@ A web app for maintaining and sharing movie watchlists. Users can search movies 
 Here is a list of major frameworks we employed while building this project:
   
 * [Flask](https://flask.palletsprojects.com/en/2.0.x/)
-* [Google Authentication](https://developers.google.com/identity/protocols/oauth2)
+* [Google FireBase](https://firebase.google.com)
 * [React](https://reactjs.org/docs/getting-started.html)
 
 
@@ -102,10 +102,19 @@ To get started with this project, simply follow the steps below. It is assumed o
 1. <del>Currently our app does not work on Heroku. We think this is because we have included Google Authentication to our project which is crashing Heroku. Our app does run locally though. As such we have not implemented Continous Deployment. </del> As of the latest release, this bug has been resolved.
 
 ## Linting
+### Python
 1. E0401 (Import error)
 Disabled because pylint was not correctly detecting import files even though the code was able to import files to run
 2. W1508 (Invalid envvar default)
 Disabled because the int 8080 was present in os.getenv. The number was needed to host the app. 
+
+### JavaScript
+1. `react/function-component-definition` was set to `[2, { "namedComponents": "function-declaration" }]` to aloow for function declerations to not error, this is not the default for this, but the fuinction decleration method is personal preference in most cases so we chose this
+2. `"react/jsx-filename-extension"` is set to `"off"` to because we didn't realise we needed to have .jsx and not .js for jsx files. 
+3. `"react/jsx-no-bind"` is set to `[2, {"allowFunctions": true, "allowArrowFunctions": true}]` so that we can have funcions passes into components without errors.
+4. `"react/forbid-prop-types"` is set to `"off` because we wanted to pass any datatype in as a prop. We are passing may different types of data to props os it was easiest to just disable the warning instead of specify every data type.
+5. `"react/require-default-props"` is set to `"off"` because out app is so dynamic and backend heavy we can't have default values for props.
+6. `"import/no-cycle"` is set to `"off"` because we had a prop import cycle that didn't break the app but was needed to render differnt pages in similar ways. 
 
 
 <!-- DEVELOPERS -->
