@@ -161,10 +161,10 @@ function Movie(props) {
 Movie.propTypes = {
   authToken: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
+  id: PropTypes.any.isRequired,
   image: PropTypes.string.isRequired,
   rating: PropTypes.any,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.any,
   comment: PropTypes.any,
   genres: PropTypes.any,
   releaseDate: PropTypes.any,
