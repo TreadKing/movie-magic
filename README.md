@@ -73,14 +73,18 @@ To get started with this project, simply follow the steps below. It is assumed o
 2. Create a .env file containing the following information:
     * ``` MOVIEDB_KEY ```
         - Can be obtained by creating an account from [TheMovieDB](https://www.themoviedb.org/) and navigate to API under profile settings. 
-    *  ``` FIREBASE_PROJECT_ID ```
+    * All enviroment variables that start with ```FIREBASE``` are for Google Firebase 
+       - Can be obtained by creating an account and project at [Firebase](https://firebase.google.com/)
+    * ``` FIREBASE_PROJECT_ID ```
     * ``` FIREBASE_PRIVATE_KEY ```
     * ``` FIREBASE_CLIENT_EMAIL ```
-    * ``` DATABASE_URL ```
+    * All enviroment variables that start with ```REACT_APP_FIREBASE``` are for Google Firebase's login process
         - Can be obtained by creating an account and project at [Firebase](https://firebase.google.com/)
-    * ``` GOOGLE_CLIENT_ID ```
-    * ``` GOOGLE_CLIENT_SECRET ```
-        - Can be obtained by creating a Google Account and creating a Google API Project. Documentation can be found [here](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid)
+    * ```REACT_APP_FIREBASE_API_KEY```
+    * ```REACT_APP_FIREBASE_APP_ID```
+    * ```REACT_APP_FIREBASE_DATABASE_URL```
+    * ```REACT_APP_FIREBASE_PROJECT_ID```
+    * ```REACT_APP_FIREBASE_SENDER_ID```
 
 
 
