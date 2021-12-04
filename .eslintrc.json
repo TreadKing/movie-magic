@@ -10,6 +10,7 @@
     },
     "globals": {"fetch": false},
     "env": {
-        "browser": true
+        "browser": true,
+        "jest": true
     }
 }

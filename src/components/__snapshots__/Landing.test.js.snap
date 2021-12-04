@@ -1,0 +1,360 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test if the landing page renders 1`] = `
+<div
+  className="body-wrap boxed-container"
+>
+  <header
+    className="site-header"
+  />
+  <main>
+    <section
+      className="hero"
+    >
+      <div
+        className="container"
+      >
+        <div
+          className="hero-inner"
+        >
+          <div
+            className="hero-copy"
+          >
+            <h1
+              className="hero-title mt-0"
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Movie Magic
+            </h1>
+            <p
+              className="hero-paragraph"
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Movie Magic is your own personalised watchlist of films you have been waiting to watch all in one place.
+            </p>
+            <div
+              className="hero-cta"
+            >
+              <button
+                className="button button-primary"
+                onClick={[Function]}
+                type="button"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+          <div
+            className="hero-media"
+          >
+            <div
+              className="header-illustration"
+            >
+              <img
+                alt="Header illustration dark"
+                src="header-illustration-dark.svg"
+              />
+            </div>
+            <div
+              className="hero-media-illustration"
+            >
+              <img
+                alt="Hero media illustration"
+                className="hero-media-illustration-image asset-dark"
+                src="hero-media-illustration-dark.svg"
+              />
+            </div>
+            <div
+              className="hero-media-container"
+            >
+              <img
+                alt="Hero media"
+                className="hero-media-img"
+                src="film-dark.png"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      className="features section"
+    >
+      <div
+        className="container"
+      >
+        <div
+          className="features-inner section-inner has-bottom-divider"
+        >
+          <div
+            className="features-header text-center"
+          >
+            <div
+              className="container-sm"
+            >
+              <h2
+                className="hero-title mt-0"
+                style={
+                  Object {
+                    "color": "white",
+                  }
+                }
+              >
+                Why Movie Magic?
+              </h2>
+              <p
+                className="hero-paragraph"
+                style={
+                  Object {
+                    "color": "white",
+                  }
+                }
+              >
+                With Movie Magic, you can get suggestions based on the actors present in all your favorite film and save those recommendations for later reference, follow your friends and keep track of the movies they plan to watch as well.
+              </p>
+            </div>
+          </div>
+          <div
+            className="features-wrap"
+          >
+            <div
+              className="feature is-revealing"
+            >
+              <div
+                className="feature-inner"
+              >
+                <div
+                  className="feature-icon"
+                >
+                  <img
+                    alt="Feature 01"
+                    src="feature-01-light.svg"
+                  />
+                </div>
+                <div
+                  className="feature-content"
+                >
+                  <h3
+                    className="feature-title mt-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Search and Save Movies
+                  </h3>
+                  <p
+                    className="text-sm mb-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Find and save movies you plan to watch on a personalized watchlist.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="feature is-revealing"
+            >
+              <div
+                className="feature-inner"
+              >
+                <div
+                  className="feature-icon"
+                >
+                  <img
+                    alt="Feature 02"
+                    src="feature-02-light.svg"
+                  />
+                </div>
+                <div
+                  className="feature-content"
+                >
+                  <h3
+                    className="feature-title mt-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Keep up with Friends
+                  </h3>
+                  <p
+                    className="text-sm mb-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Keep up with the watchlists of your friends and allow them to view your list as well.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="feature is-revealing"
+            >
+              <div
+                className="feature-inner"
+              >
+                <div
+                  className="feature-icon"
+                >
+                  <img
+                    alt="Feature 03"
+                    src="feature-03-light.svg"
+                  />
+                </div>
+                <div
+                  className="feature-content"
+                >
+                  <h3
+                    className="feature-title mt-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Upcoming Releases
+                  </h3>
+                  <p
+                    className="text-sm mb-0"
+                    style={
+                      Object {
+                        "color": "white",
+                      }
+                    }
+                  >
+                    Get an updated list of upcoming movies for your viewing.
+                  </p>
+                  <br />
+                  <br />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      className="cta section"
+    >
+      <div
+        className="container-sm"
+      >
+        <div
+          className="cta-inner section-inner"
+        >
+          <div
+            className="cta-header text-center"
+          >
+            <h2
+              className="section-title mt-0"
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              The Creators
+            </h2>
+            <p
+              className="section-paragraph"
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              The app was created by the following developers:
+            </p>
+            <li
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Nana Krampah
+            </li>
+            <li
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Brandon Hodges
+            </li>
+            <li
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Devang Patel
+            </li>
+            <li
+              style={
+                Object {
+                  "color": "white",
+                }
+              }
+            >
+              Steven Maharath 
+            </li>
+            <br />
+            <br />
+            <div
+              className="cta-cta"
+            >
+              <button
+                className="button-primary"
+                onClick={[Function]}
+                type="button"
+              >
+                Login Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer
+    className="site-footer has-top-divider"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="site-footer-inner"
+      >
+        <br />
+        <br />
+        <div
+          className="footer-copyright"
+        >
+          © 2021 Movie Magic, all rights reserved
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+`;
