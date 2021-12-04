@@ -52,16 +52,16 @@ def new_login():
         users_ref = db.reference("/").child("users").child(str(user_id))
 
         if not users_ref.get():
-            print(f"new user: {user_id}")
+            # print(f"new user: {user_id}")
             users_ref.set({"name": username})
             return make_response(jsonify({"message": "new user added"})), 200
 
         msg = f"user {user_id} already exists"
-        print(msg)
+        # print(msg)
         return make_response(jsonify({"message": msg})), 200
 
     except AttributeError as error:
-        print(error)
+        # print(error)
         return make_response(jsonify({"message": str(error)})), 500
 
 
@@ -110,7 +110,7 @@ def filter_watchlist(user_id, results):
 @app.route("/search", methods=["POST", "GET"])
 def search_movie():
     """Retrieves a list of movies that match the input query"""
-    print(request.json)
+    # print(request.json)
 
     auth_token = request.json["auth_token"]
     user_id = decode_auth_token(auth_token)
@@ -154,7 +154,7 @@ def search_movie():
         pass
 
     try:
-        print(search(user_input, filters))
+        # print(search(user_input, filters))
         api_results = filter_watchlist(user_id, search(user_input, filters))
 
         return make_response(jsonify(api_results)), 200
@@ -319,7 +319,7 @@ def add_to_list():
 
         # Send user to view their own watchlist
     else:
-        print(status)
+        # print(status)
         # movie_id_ref.set({})
         movie_id_ref.set(
             {
