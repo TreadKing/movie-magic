@@ -16,7 +16,7 @@ function Rating(props) {
 }
 
 Rating.propTypes = {
-  rating: PropTypes.string.isRequired,
+  rating: PropTypes.any,
 };
 
 export default Rating;

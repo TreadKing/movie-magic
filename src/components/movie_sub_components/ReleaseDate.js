@@ -17,7 +17,7 @@ function ReleaseDate(props) {
 }
 
 ReleaseDate.propTypes = {
-  releaseDate: PropTypes.string.isRequired,
+  releaseDate: PropTypes.any,
 };
 
 export default ReleaseDate;

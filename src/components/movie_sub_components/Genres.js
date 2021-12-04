@@ -17,7 +17,7 @@ function Genres(props) {
 }
 
 Genres.propTypes = {
-  genres: PropTypes.string.isRequired,
+  genres: PropTypes.any,
 };
 
 export default Genres;
