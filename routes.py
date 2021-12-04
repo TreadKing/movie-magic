@@ -240,7 +240,7 @@ def get_list():
             }
             watch_list_output.append(watch_list_item)
 
-    except:
+    except TypeError:
         watch_list_output = []
 
     return make_response(jsonify(watch_list_output)), 200
